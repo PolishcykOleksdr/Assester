@@ -17,12 +17,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public User registerUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
 
     public User findByEmail(String email) {
         return userRepository
@@ -30,9 +24,5 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(
                         String.format("User with email %s not found", email)
                 ));
-    }
-
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
     }
 }
