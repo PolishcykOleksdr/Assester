@@ -4,9 +4,7 @@ import com.order.platform.assester.entities.User;
 import com.order.platform.assester.exceptions.UserNotFoundException;
 import com.order.platform.assester.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
 
 /**
  * author: user,
