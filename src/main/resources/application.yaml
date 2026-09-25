@@ -1,6 +1,5 @@
 spring:
   application:
     name: Assester
-
-server:
-  port: 8080
+  profiles:
+    active: local

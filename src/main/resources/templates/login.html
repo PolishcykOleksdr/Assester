@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Assester</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Welcome Back</h1>
+            <p class="subtitle">Sign in to your account to continue</p>
+
+            <div th:if="${param.error}" class="alert alert-error">
+                Invalid email or password. Please try again.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                You have been logged out successfully.
+            </div>
+
+            <form th:action="@{/login/login}" th:method="post" th:object="${loginUserDTO}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf != null}">
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email"
+                           th:field="*{email}"
+                           placeholder="Enter your email"
+                           autocomplete="email"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password"
+                           th:field="*{password}"
+                           placeholder="Enter your password"
+                           autocomplete="current-password"
+                           required>
+                </div>
+
+                <button type="submit" class="btn">Sign In</button>
+            </form>
+
+            <a th:href="@{/register/register}" class="link">Don't have an account? Register</a>
+        </div>
+    </div>
+</body>
+</html>

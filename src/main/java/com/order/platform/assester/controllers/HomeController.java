@@ -1,8 +1,11 @@
 package com.order.platform.assester.controllers;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * author: user,
@@ -13,4 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class HomeController {
 
+    @GetMapping
+    public String getHomePage(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null) {
+            model.addAttribute("email", userDetails.getUsername());
+        }
+        return "home";
+    }
 }

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Assester</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <div class="container" style="max-width: 700px;">
+        <div class="navbar">
+            <a th:href="@{/}" class="brand">Assester</a>
+            <div class="actions">
+                <span sec:authorize="isAuthenticated()" th:text="${email}">User</span>
+                <span sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></span>
+                <span sec:authorize="!isAuthenticated()"><a th:href="@{/login/login}">Login</a></span>
+                <span sec:authorize="!isAuthenticated()"><a th:href="@{/register/register}">Register</a></span>
+            </div>
+        </div>
+
+        <div class="card hero">
+            <h2 sec:authorize="isAuthenticated()">Welcome, <span sec:authentication="name">User</span>!</h2>
+            <h2 sec:authorize="!isAuthenticated()">Welcome to Assester</h2>
+            <p sec:authorize="isAuthenticated()">You are successfully logged in and ready to go.</p>
+            <p sec:authorize="!isAuthenticated()">Please sign in or create an account to get started.</p>
+
+            <div sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login/login}" class="btn">Sign In</a>
+                <a th:href="@{/register/register}" class="btn btn-secondary">Create Account</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
