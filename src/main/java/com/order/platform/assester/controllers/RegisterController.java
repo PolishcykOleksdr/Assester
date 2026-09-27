@@ -17,13 +17,13 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/register")
 public class RegisterController {
-    @GetMapping("/register")
+    @GetMapping
     public String getRegisterPage(Model model) {
         model.addAttribute("registerUserDTO", new RegisterUserDTO("", "", "", ""));
         return "register";
     }
 
-    @PostMapping("/register")
+    @PostMapping
     public String registerUser(
             @Valid @ModelAttribute("registerUserDTO") RegisterUserDTO registerUserDTO
     ) {

@@ -3,18 +3,23 @@ package com.order.platform.assester.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * author: user,
  * date: 23.09.2026
  */
 
-public record LoginUserDTO(
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoginUserDTO {
         @Email(message = "Invalid email format")
         @NotBlank(message = "Email cannot be empty")
-        String email,
+        private String email;
         @NotBlank(message = "Password cannot be empty")
         @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
-        String password
-) {
+        private String password;
 }

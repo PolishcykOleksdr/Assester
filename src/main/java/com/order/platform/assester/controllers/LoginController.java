@@ -6,6 +6,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,13 +34,19 @@ public class LoginController {
     private final AuthenticationManager authManager;
     private final JwtService jwtService;
 
-    @GetMapping("/login")
-    public String getLoginPage(Model model) {
+    @GetMapping
+    public String getLoginPage(Model model, Authentication authentication) {
+        if(authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)
+        ){
+            return "redirect:/";
+        }
         model.addAttribute("loginUserDTO", new LoginUserDTO("", ""));
         return "login";
     }
 
-    @PostMapping("/login")
+    @PostMapping
     public String loginUser(
             @Valid @ModelAttribute("loginUserDTO") LoginUserDTO loginUserDTO,
             BindingResult bindingResult,
@@ -48,29 +57,30 @@ public class LoginController {
             return "login";
         }
 
-        if(authentication != null
-                && authentication.isAuthenticated()
-                && !(authentication instanceof AnonymousAuthenticationToken)
-        ){
+        try {
+            Authentication auth = authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginUserDTO.getEmail(),
+                            loginUserDTO.getPassword()
+                    )
+            );
+
+            UserDetails user = (UserDetails) auth.getPrincipal();
+            String token = jwtService.generateToken(user);
+
+            ResponseCookie cookie = ResponseCookie.from("BOOK_STORE_TOKEN", token)
+                    .httpOnly(true)
+                    .path("/")
+                    .maxAge(24 * 60 * 60)
+                    .sameSite("Lax")
+                    .build();
+
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
             return "redirect:/";
+        } catch (AuthenticationException e) {
+            bindingResult.reject("login.error", "Invalid email or password");
+            return "login";
         }
-
-        Authentication auth = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginUserDTO.email(),
-                        loginUserDTO.password()
-                )
-        );
-
-        UserDetails user = (UserDetails) auth.getPrincipal();
-
-        String token = jwtService.generateToken(user);
-        Cookie cookie = new Cookie("BOOK_STORE_TOKEN", token);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(24 * 60 * 60);
-        response.addCookie(cookie);
-
-        return "redirect:/";
     }
 }

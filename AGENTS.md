@@ -1,4 +1,4 @@
-# 🤖 AGENTS.md — Assester Project Guidelines
+# AGENTS.md — Assester Project Guidelines
 
 ## 1. Project Overview & Context
 - **Project Name:** Assester (`com.order.platform:Assester`)

@@ -1,0 +1,46 @@
+# VCS / IDE
+.git
+.gitignore
+.gitattributes
+.idea
+*.iml
+*.iws
+.vscode
+.opencode
+.settings
+.classpath
+.project
+*.apt_generated
+.factorypath
+.sts4-cache
+.springBeans
+
+# build output
+target
+build
+out
+*.jar
+!**/src/main/**/target/
+
+# tests
+src/test
+**/src/test/**
+
+# wrapper
+mvnw
+mvnw.cmd
+.mvn
+
+# docker / docs ---
+Dockerfile
+docker-compose.yaml
+.dockerignore
+README.md
+AGENTS.md
+**/*.md
+
+# secrets & local config
+.env
+**/application-local.yaml
+**/application-local.yml
+**/application-local.properties
