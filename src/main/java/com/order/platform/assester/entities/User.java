@@ -3,7 +3,6 @@ package com.order.platform.assester.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import com.order.platform.assester.enums.Role;
 
 /**
  * author: user,
@@ -22,24 +21,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "username", nullable = false)
+    private String username;
+
     @Column(unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
-
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
-
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
-
-    @Column(name = "middle_name")
-    private String middleName;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
 
     @Builder.Default
     private boolean isActive = true;
