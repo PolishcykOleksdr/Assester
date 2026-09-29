@@ -20,3 +20,4 @@ server:
 jwt:
   secret: ${JWT_SECRET:0f41b1d9269bdbfb3fe50da4f10b78804c6004fec5ace2114eee5efce5ed9cb4}
   expiration: ${JWT_EXPIRATION:86400000}
+  token-name: ${AUTH_TOKEN_NAME:AUTH_TOKEN}

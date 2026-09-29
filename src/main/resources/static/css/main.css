@@ -143,6 +143,23 @@ body {
 
 .navbar .actions a:hover { color: var(--primary); }
 
+.navbar .actions .logout-form {
+  display: inline-block;
+  margin-left: 1rem;
+}
+
+.navbar .actions .logout-form button {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.navbar .actions .logout-form button:hover { color: var(--primary); }
+
 .hero {
   text-align: center;
   padding: 3rem 1rem;

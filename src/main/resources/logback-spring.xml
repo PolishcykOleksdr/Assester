@@ -40,6 +40,23 @@
         </encoder>
     </appender>
 
+    <appender name="debug_log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FOLDER}/debug/debug.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FOLDER}/debug/archive/debug-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>1MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d [%-5level] [%thread] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <!-- For spring -->
     <logger name="org.springframework" level="WARN"/>
 
@@ -52,5 +69,6 @@
         <appender-ref ref="STDOUT" />
         <appender-ref ref="info_log" />
         <appender-ref ref="error_log" />
+        <appender-ref ref="debug_log" />
     </root>
 </configuration>

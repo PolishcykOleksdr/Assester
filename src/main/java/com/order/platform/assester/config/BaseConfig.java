@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class BaseConfig {
+    //TODO: solve the issue with home page after auth login, test everything
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
