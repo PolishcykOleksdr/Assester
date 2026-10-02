@@ -1,8 +1,10 @@
 package com.order.platform.assester.security;
 
+import com.order.platform.assester.logging.EmailMasker;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +18,7 @@ import java.util.Date;
  * date: 24.09.2026
  */
 
+@Slf4j
 @Lazy
 @Service
 public class JwtService {
@@ -28,9 +31,11 @@ public class JwtService {
     ) {
         this.secretKey = Keys.hmacShaKeyFor(SECRET_STRING.getBytes());
         this.EXPIRATION_TIME = EXPIRATION_TIME;
+        log.info("JWT service initialised with {} ms token lifetime", EXPIRATION_TIME);
     }
 
     public String generateToken(UserDetails userDetails) {
+        log.debug("Generating JWT for subject {}", EmailMasker.mask(userDetails.getUsername()));
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())
@@ -54,6 +59,7 @@ public class JwtService {
             return true;
         }
         catch (JwtException | IllegalArgumentException e){
+            log.debug("JWT rejected during validation: {}", e.getClass().getSimpleName());
             return false;
         }
     }

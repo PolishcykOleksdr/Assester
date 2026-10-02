@@ -1,5 +1,6 @@
 package com.order.platform.assester.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * date: 23.09.2026
  */
 
+@Slf4j
 @Controller
 @RequestMapping("/")
 public class HomeController {
@@ -20,6 +22,9 @@ public class HomeController {
     public String getHomePage(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails != null) {
             model.addAttribute("email", userDetails.getUsername());
+            log.debug("Home page requested by authenticated user {}", userDetails.getUsername());
+        } else {
+            log.debug("Home page requested by anonymous visitor");
         }
         return "home";
     }

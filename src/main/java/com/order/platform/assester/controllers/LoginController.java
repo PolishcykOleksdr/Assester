@@ -1,6 +1,7 @@
 package com.order.platform.assester.controllers;
 
 import com.order.platform.assester.dto.LoginUserDTO;
+import com.order.platform.assester.logging.EmailMasker;
 import com.order.platform.assester.services.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -37,9 +38,9 @@ public class LoginController {
                 && !(authentication instanceof AnonymousAuthenticationToken)
         ){
             log.info("Authenticated user '{}' attempted to access login page. Redirecting to home.",
-                    authentication.getName()
+                    EmailMasker.mask(authentication.getName())
             );
-            return "redirect:/";
+            return "redirect:catalog";
         }
 
         model.addAttribute("loginUserDTO", new LoginUserDTO());
@@ -52,21 +53,19 @@ public class LoginController {
             BindingResult bindingResult,
             HttpServletResponse response
     ) {
-        log.debug("POST /login request for email={}", loginUserDTO.getEmail());
+        log.debug("POST /login request for email={}", EmailMasker.mask(loginUserDTO.getEmail()));
         if(bindingResult.hasErrors()){
             log.warn("Validation failed during login attempt for email={}. Errors count={}",
-                    loginUserDTO.getEmail(), bindingResult.getErrorCount());
+                    EmailMasker.mask(loginUserDTO.getEmail()), bindingResult.getErrorCount());
             return "login";
         }
 
-        log.info("Attempting authentication for user email={}", loginUserDTO.getEmail());
         String cookie = authService.authenticateUser(
                 loginUserDTO.getEmail(),
                 loginUserDTO.getPassword());
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie);
-        log.info("User email={} successfully authenticated", loginUserDTO.getEmail());
 
-        return "redirect:/";
+        return "redirect:catalog";
     }
 }

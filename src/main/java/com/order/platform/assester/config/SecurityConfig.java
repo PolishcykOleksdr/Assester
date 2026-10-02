@@ -35,12 +35,15 @@ public class SecurityConfig {
                         SessionCreationPolicy.STATELESS
                 ))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/login", "/register", "/", "/logout", "/css/**", "/js/**", "/error").permitAll()
+                        auth.requestMatchers("/css/**", "/js/**").permitAll()
+                                .requestMatchers("/login", "/register", "/", "/logout").permitAll()
+                                .requestMatchers("/catalog/**").authenticated()
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .deleteCookies("tokenName")
+                        .deleteCookies(authTokenName)
                         .logoutSuccessUrl("/")
                 )
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);

@@ -13,27 +13,16 @@
         <div class="navbar">
             <a th:href="@{/}" class="brand">Assester</a>
             <div class="actions">
-                <span sec:authorize="isAuthenticated()" th:text="${email}">User</span>
-                <span sec:authorize="isAuthenticated()">
-                    <form th:action="@{/logout}" th:method="post" class="logout-form">
-                        <button type="submit">Logout</button>
-                    </form>
-                </span>
-                <span sec:authorize="!isAuthenticated()"><a th:href="@{/login}">Login</a></span>
-                <span sec:authorize="!isAuthenticated()"><a th:href="@{/register}">Register</a></span>
+                <a th:href="@{/login}">Login</a>
+                <a th:href="@{/register}">Register</a>
             </div>
         </div>
 
         <div class="card hero">
-            <h2 sec:authorize="isAuthenticated()">Welcome, <span sec:authentication="name">User</span>!</h2>
-            <h2 sec:authorize="!isAuthenticated()">Welcome to Assester</h2>
-            <p sec:authorize="isAuthenticated()">You are successfully logged in and ready to go.</p>
-            <p sec:authorize="!isAuthenticated()">Please sign in or create an account to get started.</p>
-
-            <div sec:authorize="!isAuthenticated()">
-                <a th:href="@{/login}" class="btn">Sign In</a>
-                <a th:href="@{/register}" class="btn btn-secondary">Create Account</a>
-            </div>
+            <h2>Welcome to Assester</h2>
+            <p>Please sign in or create an account to get started.</p>
+             <a th:href="@{/login}" class="btn">Sign In</a>
+            <a th:href="@{/register}" class="btn btn-secondary">Create Account</a>
         </div>
     </div>
 </body>

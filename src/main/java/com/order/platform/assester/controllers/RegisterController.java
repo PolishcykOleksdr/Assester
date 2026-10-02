@@ -1,6 +1,7 @@
 package com.order.platform.assester.controllers;
 
 import com.order.platform.assester.dto.RegisterUserDTO;
+import com.order.platform.assester.logging.EmailMasker;
 import com.order.platform.assester.services.AuthService;
 import com.order.platform.assester.services.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,11 +38,11 @@ public class RegisterController {
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)
         ){
-            return "redirect:/";
+            return "redirect:catalog";
         }
 
         model.addAttribute("registerUserDTO", new RegisterUserDTO());
-        log.info("Returning register page");
+        log.debug("Returning register page");
         return "register";
     }
 
@@ -52,19 +53,20 @@ public class RegisterController {
             HttpServletResponse response
     ) {
         if(bindingResult.hasErrors()){
+            log.warn("Validation failed during registration for email={}. Errors count={}",
+                    EmailMasker.mask(registerUserDTO.getEmail()), bindingResult.getErrorCount());
             return "register";
         }
 
-        userService.createUser(registerUserDTO);
-        log.info("User registered successfully");
+        Long userId = userService.createUser(registerUserDTO);
+        log.info("User with id {} registered successfully", userId);
 
         String cookie = authService.authenticateUser(
                 registerUserDTO.getEmail(),
                 registerUserDTO.getPassword());
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie);
-        log.info("User has been authenticated");
 
-        return "redirect:/";
+        return "redirect:catalog";
     }
 }

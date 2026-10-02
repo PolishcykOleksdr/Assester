@@ -1,5 +1,6 @@
 package com.order.platform.assester.entities;
 
+import com.order.platform.assester.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -32,6 +33,10 @@ public class User {
 
     @Builder.Default
     private boolean isActive = true;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Role role = Role.USER;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
