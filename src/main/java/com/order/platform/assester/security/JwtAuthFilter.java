@@ -21,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * author: user,
@@ -31,10 +32,18 @@ import java.util.Arrays;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
+    private static final List<String> PUBLIC_PATHS = List.of("/css/", "/js/", "/favicon.ico");
+
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     @Value("${jwt.token-name}")
     private String authTokenName;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        return PUBLIC_PATHS.stream().anyMatch(uri::startsWith);
+    }
 
     @Override
     protected void doFilterInternal(
@@ -55,6 +64,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String email = jwtService.getEmailFromToken(jwt);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                MDC.put(LogKeys.USER.getKey(), EmailMasker.mask(email));
                 try {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                     UsernamePasswordAuthenticationToken authentication =
@@ -63,7 +73,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     if (userDetails.isEnabled()) {
                         SecurityContextHolder.getContext().setAuthentication(authentication);
-                        MDC.put(LogKeys.USER.getKey(), EmailMasker.mask(email));
                         log.info("JWT accepted for user {} with authorities {} from {}",
                                 EmailMasker.mask(email), userDetails.getAuthorities(),
                                 MDC.get(LogKeys.REMOTE_ADDR.getKey()));

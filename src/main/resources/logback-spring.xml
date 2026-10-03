@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <property name="LOG_FOLDER" value="${LOG_FOLDER:-logs}"/>
-    <property name="MDC" value="%X{requestId:-no-request-id} %X{user:-anonymous}"/>
+    <property name="MDC" value="%X{requestId:-no-request-id} %X{user:-anonymous} %X{method:-no-method} %X{uri:-no-uri} %X{remoteAddr:-no-remote-addr}"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -11,8 +11,15 @@
 
     <appender name="info_log" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FOLDER}/info/info.log</file>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_FOLDER}/info/archive/info-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>

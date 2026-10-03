@@ -35,7 +35,7 @@ public class SecurityConfig {
                         SessionCreationPolicy.STATELESS
                 ))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/css/**", "/js/**").permitAll()
+                        auth.requestMatchers("/css/**", "/js/**", "/favicon.ico").permitAll()
                                 .requestMatchers("/login", "/register", "/", "/logout").permitAll()
                                 .requestMatchers("/catalog/**").authenticated()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")

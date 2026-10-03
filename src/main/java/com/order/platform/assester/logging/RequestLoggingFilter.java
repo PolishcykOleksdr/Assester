@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -47,7 +48,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             log.info("Request completed with status {} in {} ms",
                     response.getStatus(),
                     System.currentTimeMillis() - startedAt);
-            MDC.clear();
+            Arrays.stream(LogKeys.values()).forEach(key -> MDC.remove(key.getKey()));
         }
     }
 
