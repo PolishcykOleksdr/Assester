@@ -50,7 +50,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         } else if (!jwtService.validateToken(jwt)) {
             log.warn("Rejected invalid or expired JWT presented via {} for {} {} from {}",
                     tokenSource(request), request.getMethod(), request.getRequestURI(),
-                    MDC.get(LogKeys.REMOTE_ADDR));
+                    MDC.get(LogKeys.REMOTE_ADDR.getKey()));
         } else {
             String email = jwtService.getEmailFromToken(jwt);
 
@@ -63,10 +63,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     if (userDetails.isEnabled()) {
                         SecurityContextHolder.getContext().setAuthentication(authentication);
-                        MDC.put(LogKeys.USER, EmailMasker.mask(email));
+                        MDC.put(LogKeys.USER.getKey(), EmailMasker.mask(email));
                         log.info("JWT accepted for user {} with authorities {} from {}",
                                 EmailMasker.mask(email), userDetails.getAuthorities(),
-                                MDC.get(LogKeys.REMOTE_ADDR));
+                                MDC.get(LogKeys.REMOTE_ADDR.getKey()));
                     } else {
                         log.warn("Account {} is disabled - authentication rejected", EmailMasker.mask(email));
                     }

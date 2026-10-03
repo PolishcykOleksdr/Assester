@@ -2,6 +2,7 @@ package com.order.platform.assester.controllers;
 
 import com.order.platform.assester.dto.RegisterUserDTO;
 import com.order.platform.assester.logging.EmailMasker;
+import com.order.platform.assester.logging.annotation.Audited;
 import com.order.platform.assester.services.AuthService;
 import com.order.platform.assester.services.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,6 +33,7 @@ public class RegisterController {
     private final AuthService authService;
     private final UserService userService;
 
+    @Audited
     @GetMapping
     public String getRegisterPage(Model model, Authentication authentication) {
         if(authentication != null
@@ -46,6 +48,7 @@ public class RegisterController {
         return "register";
     }
 
+    @Audited
     @PostMapping
     public String registerUser(
             @Valid @ModelAttribute("registerUserDTO") RegisterUserDTO registerUserDTO,

@@ -44,7 +44,7 @@ public class AuthService {
             );
         } catch (AuthenticationException e) {
             log.warn("Failed login attempt for email {} from {} [{}]",
-                    EmailMasker.mask(email), MDC.get(LogKeys.REMOTE_ADDR), e.getClass().getSimpleName());
+                    EmailMasker.mask(email), MDC.get(LogKeys.REMOTE_ADDR.getKey()), e.getClass().getSimpleName());
             throw e;
         }
 

@@ -7,12 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method as auditable: {@link com.order.platform.assester.logging.LogbackAspect} logs its
- * invocation, duration and outcome. Method arguments are never logged, because they may carry
- * credentials (see {@code LoginUserDTO} / {@code RegisterUserDTO}).
- *
- * @author: user,
- * date: 02.10.2026
+ * author: user,
+ * date: 03.10.2026
  */
 
 @Documented

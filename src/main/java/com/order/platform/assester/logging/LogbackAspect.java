@@ -9,13 +9,8 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 /**
- * Logs every method annotated with {@link Audited}: invocation, outcome and duration.
- * Only the signature is logged - argument values are intentionally omitted because they may
- * contain credentials. Unexpected exceptions are re-thrown and logged with a full stack trace by
- * {@code GlobalExceptionHandler}, so this aspect stays at WARN without a stack trace.
- *
- * @author: user,
- * date: 02.10.2026
+ * author: user,
+ * date: 03.10.2026
  */
 
 @Slf4j

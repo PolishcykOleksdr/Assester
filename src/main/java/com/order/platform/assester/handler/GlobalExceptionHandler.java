@@ -11,11 +11,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
- * Catch-all handler for unexpected exceptions. Without it, unknown failures reach the error log only
- * via the raw Tomcat stack trace, with no request context attached.
- *
- * @author: user,
- * date: 02.10.2026
+ * author: user,
+ * date: 03.10.2026
  */
 
 @Slf4j
@@ -26,7 +23,7 @@ public class GlobalExceptionHandler {
     public String handleAccessDenied(AccessDeniedException ex, Model model, HttpServletRequest request) {
         log.warn("Access denied on {} {} from user={}: {}",
                 request.getMethod(), request.getRequestURI(),
-                MDC.get(LogKeys.USER), ex.getMessage());
+                MDC.get(LogKeys.USER.getKey()), ex.getMessage());
         model.addAttribute("status", HttpStatus.FORBIDDEN.value());
         model.addAttribute("error", HttpStatus.FORBIDDEN.getReasonPhrase());
         model.addAttribute("message", ex.getMessage());

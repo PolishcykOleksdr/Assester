@@ -1,20 +1,24 @@
 package com.order.platform.assester.logging;
 
 /**
- * MDC keys shared between {@link RequestLoggingFilter} and the logging configuration patterns.
- *
- * @author: user,
- * date: 02.10.2026
+ * author: user,
+ * date: 03.10.2026
  */
+public enum LogKeys {
 
-public final class LogKeys {
+    REQUEST_ID("requestId"),
+    USER("user"),
+    METHOD("method"),
+    URI("uri"),
+    REMOTE_ADDR("remoteAddr");
 
-    public static final String REQUEST_ID = "requestId";
-    public static final String USER = "user";
-    public static final String METHOD = "method";
-    public static final String URI = "uri";
-    public static final String REMOTE_ADDR = "remoteAddr";
+    private String key;
 
-    private LogKeys() {
+    LogKeys(String key) {
+        this.key = key;
+    }
+
+    public String getKey() {
+        return key;
     }
 }

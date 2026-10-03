@@ -18,17 +18,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * Populates the MDC with per-request context so that every log statement emitted while handling a
- * request can be correlated, and emits one structured entry/exit line per HTTP request.
- *
- * <p>This filter is registered with {@link Ordered#HIGHEST_PRECEDENCE}, so it wraps the Spring Security
- * chain. That means {@code SecurityContextHolderFilter} has already cleared the security context by the
- * time the {@code finally} block below runs - therefore the resolved user is taken from the MDC key that
- * {@code JwtAuthFilter} populated during the chain, with the security context only as a fallback.
- *
- *
- * @author: user,
- * date: 02.10.2026
+ * author: user,
+ * date: 03.10.2026
  */
 
 @Slf4j
@@ -43,16 +34,16 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         long startedAt = System.currentTimeMillis();
-        MDC.put(LogKeys.REQUEST_ID, UUID.randomUUID().toString());
-        MDC.put(LogKeys.METHOD, request.getMethod());
-        MDC.put(LogKeys.URI, request.getRequestURI());
-        MDC.put(LogKeys.REMOTE_ADDR, remoteAddress(request));
+        MDC.put(LogKeys.REQUEST_ID.getKey(), UUID.randomUUID().toString());
+        MDC.put(LogKeys.METHOD.getKey(), request.getMethod());
+        MDC.put(LogKeys.URI.getKey(), request.getRequestURI());
+        MDC.put(LogKeys.REMOTE_ADDR.getKey(), remoteAddress(request));
 
         log.debug("Request started");
         try {
             filterChain.doFilter(request, response);
         } finally {
-            MDC.put(LogKeys.USER, currentUserName());
+            MDC.put(LogKeys.USER.getKey(), currentUserName());
             log.info("Request completed with status {} in {} ms",
                     response.getStatus(),
                     System.currentTimeMillis() - startedAt);
@@ -61,7 +52,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
     }
 
     private String currentUserName() {
-        String fromMdc = MDC.get(LogKeys.USER);
+        String fromMdc = MDC.get(LogKeys.USER.getKey());
         if (fromMdc != null && !fromMdc.isBlank()) {
             return fromMdc;
         }

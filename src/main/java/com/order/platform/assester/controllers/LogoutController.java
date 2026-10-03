@@ -1,6 +1,7 @@
 package com.order.platform.assester.controllers;
 
 import com.order.platform.assester.logging.EmailMasker;
+import com.order.platform.assester.logging.annotation.Audited;
 import com.order.platform.assester.services.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class LogoutController {
     private final AuthService authService;
 
+    @Audited
     @PostMapping
     public String logout(HttpServletResponse response, Authentication authentication) {
         String user = isAuthenticated(authentication)

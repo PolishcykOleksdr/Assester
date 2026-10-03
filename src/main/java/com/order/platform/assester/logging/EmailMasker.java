@@ -1,10 +1,8 @@
 package com.order.platform.assester.logging;
 
 /**
- * Masks e-mail addresses before they are written to logs so that PII is not stored in clear text.
- *
- * @author: user,
- * date: 02.10.2026
+ * author: user,
+ * date: 03.10.2026
  */
 
 public final class EmailMasker {

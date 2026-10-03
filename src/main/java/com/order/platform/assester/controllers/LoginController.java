@@ -2,6 +2,7 @@ package com.order.platform.assester.controllers;
 
 import com.order.platform.assester.dto.LoginUserDTO;
 import com.order.platform.assester.logging.EmailMasker;
+import com.order.platform.assester.logging.annotation.Audited;
 import com.order.platform.assester.services.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -30,6 +31,7 @@ import org.springframework.security.core.Authentication;
 public class LoginController {
     private final AuthService authService;
 
+    @Audited
     @GetMapping
     public String getLoginPage(Model model, Authentication authentication) {
         log.debug("GET /login request received");
@@ -47,6 +49,7 @@ public class LoginController {
         return "login";
     }
 
+    @Audited
     @PostMapping
     public String loginUser(
             @Valid @ModelAttribute("loginUserDTO") LoginUserDTO loginUserDTO,

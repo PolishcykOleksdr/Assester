@@ -1,5 +1,6 @@
 package com.order.platform.assester.controllers;
 
+import com.order.platform.assester.logging.annotation.Audited;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/catalog")
 public class CatalogController {
+    @Audited
     @GetMapping
     public String getCatalogPage(Authentication authentication) {
         log.debug("Catalog page requested by {}", authentication.getName());
