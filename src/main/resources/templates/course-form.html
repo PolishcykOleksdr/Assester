@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course - Assester</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<main class="container page-container">
+    <nav class="navbar"><a th:href="@{/}" class="brand">Assester</a><div class="actions"><a th:href="@{/my/courses}">My Courses</a></div></nav>
+    <section class="card">
+        <h1>Course Details</h1>
+        <p class="subtitle">Save your course as a draft first. Course materials will be added in a later step.</p>
+        <form th:action="${formAction}" th:object="${courseForm}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf != null}">
+            <div class="form-group">
+                <label for="title">Course Title</label>
+                <input id="title" type="text" th:field="*{title}" maxlength="120" required>
+                <small class="field-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" th:field="*{description}" rows="6" maxlength="3000" required></textarea>
+                <small class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></small>
+            </div>
+            <div class="form-group">
+                <label for="accessType">Course Access</label>
+                <select id="accessType" th:field="*{accessType}" required>
+                    <option value="FREE">Free</option>
+                    <option value="PAID">Paid</option>
+                </select>
+                <small class="field-error" th:if="${#fields.hasErrors('accessType')}" th:errors="*{accessType}"></small>
+            </div>
+            <div class="form-group">
+                <label for="price">Price (UAH, for paid courses)</label>
+                <input id="price" type="number" th:field="*{price}" min="0.01" step="0.01" placeholder="For example, 499.00">
+                <small class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></small>
+                <small>Free courses do not require a price.</small>
+            </div>
+            <button class="btn" type="submit">Save Draft</button>
+        </form>
+        <a th:href="@{/my/courses}" class="link">Back to My Courses</a>
+    </section>
+</main>
+</body>
+</html>

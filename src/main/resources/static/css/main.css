@@ -76,6 +76,43 @@ body {
   background: #fff;
 }
 
+.form-group textarea, .form-group select {
+  width: 100%;
+  padding: 0.7rem 0.875rem;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+  background: #f1f5f9;
+}
+
+.form-group textarea:focus, .form-group select:focus { border-color: var(--primary); background: #fff; outline: none; }
+.form-group small { display: block; color: var(--text-muted); font-size: 0.8rem; margin-top: 0.3rem; }
+.form-group .field-error { color: var(--error); }
+
+.page-container { max-width: 960px; }
+.section-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+.section-heading h1 { text-align: left; }
+.section-heading .subtitle { text-align: left; margin: 0; }
+.compact-btn { display: inline-block; width: auto; padding: 0.6rem 1rem; text-align: center; text-decoration: none; }
+.empty-state { padding: 2rem; background: var(--bg); border-radius: 8px; text-align: center; color: var(--text-muted); }
+.empty-state h2 { color: var(--text); margin-bottom: 0.5rem; }
+.course-list { display: grid; gap: 1rem; }
+.course-row { display: flex; justify-content: space-between; gap: 1.5rem; padding: 1.25rem; border: 1px solid var(--border); border-radius: 8px; }
+.course-main { min-width: 0; }
+.course-main h2 { font-size: 1.15rem; margin-bottom: 0.4rem; }
+.course-description { color: var(--text-muted); white-space: pre-line; overflow-wrap: anywhere; }
+.course-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.8rem; font-size: 0.85rem; }
+.course-meta span, .course-meta strong { padding: 0.25rem 0.55rem; border-radius: 999px; background: var(--bg); }
+.moderation-comment { color: var(--error); margin-top: 0.7rem; font-size: 0.9rem; }
+.course-actions { display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; flex: 0 0 190px; }
+.course-actions form { margin: 0; }
+.course-actions .btn { font-size: 0.85rem; }
+
+@media (max-width: 640px) {
+  .section-heading, .course-row { align-items: stretch; flex-direction: column; }
+  .course-actions { flex-basis: auto; }
+}
+
 .form-group .error {
   color: var(--error);
   font-size: 0.8rem;

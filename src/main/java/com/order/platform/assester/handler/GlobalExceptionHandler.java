@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * author: user,
@@ -42,6 +43,19 @@ public class GlobalExceptionHandler {
         model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         model.addAttribute("error", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
         model.addAttribute("message", "An unexpected error occurred. Please try again later.");
+        return "error";
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public String handleExpectedStatus(ResponseStatusException ex, Model model,
+                                       HttpServletRequest request,
+                                       jakarta.servlet.http.HttpServletResponse response) {
+        HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
+        response.setStatus(status.value());
+        log.warn("Request {} {} rejected with status {}", request.getMethod(), request.getRequestURI(), status.value());
+        model.addAttribute("status", status.value());
+        model.addAttribute("error", status.getReasonPhrase());
+        model.addAttribute("message", ex.getReason() == null ? status.getReasonPhrase() : ex.getReason());
         return "error";
     }
 }
