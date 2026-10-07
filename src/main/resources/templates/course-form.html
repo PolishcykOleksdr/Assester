@@ -32,16 +32,28 @@
                 </select>
                 <small class="field-error" th:if="${#fields.hasErrors('accessType')}" th:errors="*{accessType}"></small>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="priceGroup" th:hidden="${courseForm.accessType.name() != 'PAID'}">
                 <label for="price">Price (UAH, for paid courses)</label>
-                <input id="price" type="number" th:field="*{price}" min="0.01" step="0.01" placeholder="For example, 499.00">
+                <input id="price" type="number" th:field="*{price}" min="0.01" step="0.01" placeholder="For example, 499.00" th:required="${courseForm.accessType.name() == 'PAID'}">
                 <small class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></small>
-                <small>Free courses do not require a price.</small>
             </div>
             <button class="btn" type="submit">Save Draft</button>
         </form>
         <a th:href="@{/my/courses}" class="link">Back to My Courses</a>
     </section>
 </main>
+<script>
+    const accessType = document.getElementById('accessType');
+    const priceGroup = document.getElementById('priceGroup');
+    const price = document.getElementById('price');
+    function syncPriceField() {
+        const paid = accessType.value === 'PAID';
+        priceGroup.hidden = !paid;
+        price.required = paid;
+        if (!paid) price.value = '';
+    }
+    accessType.addEventListener('change', syncPriceField);
+    syncPriceField();
+</script>
 </body>
 </html>

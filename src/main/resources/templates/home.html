@@ -13,6 +13,7 @@
         <div class="navbar">
             <a th:href="@{/}" class="brand">Assester</a>
             <div class="actions">
+                <a th:href="@{/catalog}">Browse Courses</a>
                 <a th:href="@{/login}">Login</a>
                 <a th:href="@{/register}">Register</a>
             </div>
@@ -20,7 +21,8 @@
 
         <div class="card hero">
             <h2>Welcome to Assester</h2>
-            <p>Please sign in or create an account to get started.</p>
+            <p>Explore published courses, or sign in to create and manage your own.</p>
+            <a th:href="@{/catalog}" class="btn">Browse Courses</a>
              <a th:href="@{/login}" class="btn">Sign In</a>
             <a th:href="@{/register}" class="btn btn-secondary">Create Account</a>
         </div>

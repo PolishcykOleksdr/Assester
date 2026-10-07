@@ -1,8 +1,7 @@
-# Assester contributor instructions
+# Assester
 
-These instructions apply throughout this repository.
+Use the guidance relevant to the task:
 
-- Before changing Java or Spring code, read [CODING_STANDARDS.md](CODING_STANDARDS.md).
-- Use [README.md](README.md) for the current application setup and run instructions.
-- Keep changes focused on the requested work and follow established project patterns.
-- Never commit credentials, tokens, or other secrets. Read secrets from environment-backed configuration.
+- Java or Spring changes: read the applicable files linked from [CODING_STANDARDS.md](CODING_STANDARDS.md).
+- Templates or static assets: read [Thymeleaf and static assets](docs/coding-standards/thymeleaf-and-static-assets.md).
+- Application setup or running: use [README.md](README.md).

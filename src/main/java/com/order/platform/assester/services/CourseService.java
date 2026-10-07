@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,10 +22,35 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<CourseSummaryDTO> findMyCourses(String authorEmail) {
-        return courseRepository.findAllByAuthorEmailOrderByUpdatedAtDesc(authorEmail)
-                .stream().map(CourseService::toSummary).toList();
+        List<Course> courses = courseRepository.findAllByAuthorEmailOrderByUpdatedAtDesc(authorEmail);
+        assignMissingCourseCodes(courses);
+        return courses.stream().map(CourseService::toSummary).toList();
+    }
+
+    @Transactional
+    public List<CourseSummaryDTO> findPublishedCourses() {
+        List<Course> courses = courseRepository.findAllByStatusOrderByUpdatedAtDesc(CourseStatus.PUBLISHED);
+        assignMissingCourseCodes(courses);
+        return courses.stream().map(CourseService::toSummary).toList();
+    }
+
+    @Transactional
+    public List<CourseSummaryDTO> searchPublishedCourses(String query) {
+        String normalizedQuery = query.trim();
+        List<Course> courses = courseRepository
+                .findAllByStatusAndTitleContainingIgnoreCaseOrStatusAndDescriptionContainingIgnoreCaseOrderByUpdatedAtDesc(
+                        CourseStatus.PUBLISHED, normalizedQuery, CourseStatus.PUBLISHED, normalizedQuery);
+        assignMissingCourseCodes(courses);
+        return courses.stream().map(CourseService::toSummary).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public CourseSummaryDTO findPublishedCourseByCode(String courseCode) {
+        return courseRepository.findByCourseCodeIgnoreCaseAndStatus(courseCode.trim(), CourseStatus.PUBLISHED)
+                .map(CourseService::toSummary)
+                .orElse(null);
     }
 
     @Transactional(readOnly = true)
@@ -96,9 +122,15 @@ public class CourseService {
         }
     }
 
+    private void assignMissingCourseCodes(List<Course> courses) {
+        courses.stream().filter(course -> course.getCourseCode() == null || course.getCourseCode().isBlank())
+                .forEach(course -> course.setCourseCode("CRS-" + UUID.randomUUID().toString()
+                        .replace("-", "").substring(0, 8).toUpperCase()));
+    }
+
     private static CourseSummaryDTO toSummary(Course course) {
-        return new CourseSummaryDTO(course.getId(), course.getTitle(), course.getDescription(),
+        return new CourseSummaryDTO(course.getId(), course.getCourseCode(), course.getTitle(), course.getDescription(),
                 course.getAccessType(), course.getPrice(), course.getCurrency(), course.getStatus(),
-                course.getModerationComment(), course.getUpdatedAt());
+                course.getModerationComment());
     }
 }

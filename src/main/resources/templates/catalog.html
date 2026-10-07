@@ -1,16 +1,71 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalog</title>
+    <title>Course Catalog — Assester</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="container page-container">
-    <div class="navbar"><a th:href="@{/}" class="brand">Assester</a><div class="actions"><a th:href="@{/my/courses}">My Courses</a></div></div>
-    <section class="card"><h1>Course Catalog</h1><p class="subtitle">Approved courses will appear here after moderation.</p></section>
-</div>
+<body class="catalog-body">
+<main class="container page-container catalog-page">
+    <nav class="navbar"><a th:href="@{/}" class="brand">Assester</a><div class="actions"><a th:href="@{/my/courses}">My Courses</a></div></nav>
+    <header class="catalog-heading">
+        <div><p class="eyebrow">ASSESTER LEARN</p><h1>Course Catalog</h1><p>Find your next topic to learn.</p></div>
+        <a class="btn compact-btn" th:href="@{/my/courses/new}">Create a Course</a>
+    </header>
+    <div class="catalog-layout">
+        <aside class="catalog-sidebar">
+            <form class="course-code-search" th:action="@{/catalog}" method="get">
+                <label class="catalog-search-label" for="courseSearch">Search by title or description</label>
+                <input id="courseSearch" class="catalog-search" type="search" name="query"
+                       placeholder="Course title or description" th:value="${searchQuery}" autocomplete="off">
+                <button class="btn compact-btn" type="submit">Search</button>
+            </form>
+            <form class="course-code-search" th:action="@{/catalog}" method="get">
+                <label class="catalog-search-label" for="courseCode">Find a course by code</label>
+                <input id="courseCode" class="catalog-search" type="search" name="code" placeholder="CRS-XXXXXXXX"
+                       th:value="${searchCode}" required maxlength="12" autocomplete="off">
+                <button class="btn compact-btn" type="submit">Find course</button>
+            </form>
+        </aside>
+        <section class="catalog-results">
+            <div class="catalog-toolbar">
+                <div>
+                    <strong th:text="${!searchCode.isEmpty() ?
+                    'Course search result' :
+                    (!searchQuery.isEmpty() ? 'Search results' : 'Published courses')
+                    }">Published courses
+                    </strong>
+                    <span th:if="${searchCode.isEmpty()}" th:text="|Count - ${#lists.size(displayCourses)}|">Count -  0</span>
+                </div>
+                <span class="catalog-sort"
+                      th:if="${searchCode.isEmpty() and searchQuery.isEmpty()}">Newest
+                </span>
+            </div>
+            <div class="course-list catalog-course-list" id="courseList">
+                <article class="course-row catalog-course" th:each="course, iter : ${displayCourses}">
+                    <div class="course-index" th:text="${#numbers.formatInteger(iter.index + 1, 2)}">01</div>
+                    <div class="course-main">
+                        <div class="catalog-course-title"><h2 th:text="${course.title}">Course title</h2><span class="difficulty-pill">Course</span></div>
+                        <p class="course-code" th:text="|Course code: ${course.courseCode}|">Course code: CRS-1234ABCD</p>
+                        <p class="course-description catalog-description" th:text="${course.description}">Course description</p>
+                        <div class="course-meta">
+                            <span
+                                th:text="${course.accessType.name() == 'FREE' ? 'Free' : 'Paid'}">Free
+                            </span>
+                            <strong th:if="${course.accessType.name() == 'PAID'}"
+                                    th:text="|${course.price} ${course.currency}|">0 UAH
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="catalog-course-action"><span class="course-status">Published</span><button class="btn compact-btn" type="button" disabled>Coming soon</button></div>
+                </article>
+                <div class="empty-state" th:if="${searchCode.isEmpty() and searchQuery.isEmpty() and #lists.isEmpty(displayCourses)}"><h2>No courses yet</h2><p>Published courses will appear here after moderation.</p></div>
+                <div class="empty-state" th:if="${!searchCode.isEmpty() and searchedCourse == null}"><h2>Course not found</h2><p>Check the code and try again. Only published courses can be found.</p></div>
+                <div class="empty-state" th:if="${searchCode.isEmpty() and !searchQuery.isEmpty() and #lists.isEmpty(displayCourses)}"><h2>No matching courses</h2><p>Try another title or description.</p></div>
+            </div>
+        </section>
+    </div>
+</main>
 </body>
 </html>

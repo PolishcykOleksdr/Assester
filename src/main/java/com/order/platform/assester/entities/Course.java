@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "courses")
@@ -19,6 +20,9 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "course_code", unique = true, length = 12)
+    private String courseCode;
 
     @Column(nullable = false, length = 120)
     private String title;
@@ -57,6 +61,9 @@ public class Course {
 
     @PrePersist
     void prePersist() {
+        if (courseCode == null || courseCode.isBlank()) {
+            courseCode = generateCourseCode();
+        }
         createdAt = LocalDateTime.now();
         updatedAt = createdAt;
     }
@@ -64,5 +71,10 @@ public class Course {
     @PreUpdate
     void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    private static String generateCourseCode() {
+        return "CRS-" + UUID.randomUUID().toString().replace("-", "")
+                .substring(0, 8).toUpperCase();
     }
 }
