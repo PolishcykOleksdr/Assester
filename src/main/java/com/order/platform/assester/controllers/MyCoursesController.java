@@ -3,6 +3,7 @@ package com.order.platform.assester.controllers;
 import com.order.platform.assester.dto.CourseFormDTO;
 import com.order.platform.assester.logging.annotation.Audited;
 import com.order.platform.assester.services.CourseService;
+import com.order.platform.assester.services.MaterialService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MyCoursesController {
     private final CourseService courseService;
+    private final MaterialService materialService;
 
     @Audited
     @GetMapping
@@ -26,7 +28,8 @@ public class MyCoursesController {
 
     @Audited
     @GetMapping("/new")
-    public String newCourse(Model model) {
+    public String newCourse(Authentication authentication, Model model) {
+        model.addAttribute("materials", materialService.findMyPublishedForSelection(authentication.getName()));
         model.addAttribute("courseForm", new CourseFormDTO());
         model.addAttribute("formAction", "/my/courses");
         return "course-form";
@@ -37,6 +40,7 @@ public class MyCoursesController {
     public String create(@Valid @ModelAttribute("courseForm") CourseFormDTO form,
                          BindingResult bindingResult, Authentication authentication, Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("materials", materialService.findMyPublishedForSelection(authentication.getName()));
             model.addAttribute("formAction", "/my/courses");
             return "course-form";
         }
@@ -48,6 +52,7 @@ public class MyCoursesController {
     @GetMapping("/{courseId}/edit")
     public String edit(@PathVariable Long courseId, Authentication authentication, Model model) {
         model.addAttribute("courseForm", courseService.getMyCourseForm(courseId, authentication.getName()));
+        model.addAttribute("materials", materialService.findMyPublishedForSelection(authentication.getName()));
         model.addAttribute("formAction", "/my/courses/" + courseId);
         return "course-form";
     }
@@ -58,6 +63,7 @@ public class MyCoursesController {
                          @Valid @ModelAttribute("courseForm") CourseFormDTO form,
                          BindingResult bindingResult, Authentication authentication, Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("materials", materialService.findMyPublishedForSelection(authentication.getName()));
             model.addAttribute("formAction", "/my/courses/" + courseId);
             return "course-form";
         }

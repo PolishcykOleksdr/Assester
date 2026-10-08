@@ -60,6 +60,7 @@
                 </p>
                 <p class="course-description" th:text="${course.description}">Description</p>
                 <div class="course-meta">
+                    <span th:text="|${course.materialCount} material(s)|">0 materials</span>
                     <span th:text="${course.accessType.name() == 'FREE' ? 'Free' : 'Paid'}">Access</span>
                     <span th:if="${course.accessType.name() == 'PAID'}"
                           th:text="|${course.price} ${course.currency}|">Price</span>

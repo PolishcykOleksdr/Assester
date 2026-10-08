@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,4 +30,6 @@ public class CourseFormDTO {
 
     @DecimalMin(value = "0.01", message = "Price must be greater than zero")
     private BigDecimal price;
+
+    private List<Long> materialIds = new ArrayList<>();
 }

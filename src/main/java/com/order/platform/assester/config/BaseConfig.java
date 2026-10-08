@@ -16,4 +16,10 @@ public class BaseConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+    //TODO:
+    // - додати перегляд курсів
+    // - розібратися фул в проекту (зрозуміти, поперевіряти)
+    // - написати тести
+    // - ...
 }

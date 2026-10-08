@@ -29,18 +29,20 @@ services:
     restart: unless-stopped
     volumes:
       - ./logs:/app/logs
+      - ./uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
       LOG_FOLDER: /app/logs
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-assester}
+      SPRING_DATASOURCE_URL: ${POSTGRES_URL:-jdbc:postgresql://postgres:5432/assester}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-rootroot}
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_SHOW_SQL: ${JPA_SHOW_SQL:-false}
       SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "false"
+      MATERIAL_STORAGE_LOCATION: ${MATERIAL_STORAGE_LOCATION:-/app/uploads/materials}
       JWT_SECRET: ${JWT_SECRET:-0f41b1d9269bdbfb3fe50da4f10b78804c6004fec5ace2114eee5efce5ed9cb4}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
       AUTH_TOKEN_NAME: ${AUTH_TOKEN_NAME:-AUTH_TOKEN}

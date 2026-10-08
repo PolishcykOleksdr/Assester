@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Materials — Assester</title><link rel="stylesheet" th:href="@{/css/main.css}"></head>
+<body><main class="container page-container">
+    <nav class="navbar"><a th:href="@{/}" class="brand">Assester</a><div class="actions"><a th:href="@{/catalog}">Course catalog</a><a th:href="@{/my/materials}">My materials</a><a th:href="@{/login}">Sign in</a></div></nav>
+    <header class="catalog-heading"><div><h1>Material library</h1><p>Find and download resources shared by the community.</p></div><a class="btn compact-btn" th:href="@{/my/materials/new}">Share a material</a></header>
+    <div class="catalog-layout"><aside class="catalog-sidebar" aria-label="Material search"><h2>Find materials</h2>
+        <form class="course-code-search" th:action="@{/materials}" method="get"><label class="catalog-search-label" for="materialQuery">Search by title or description</label><input id="materialQuery" class="catalog-search" type="search" name="query" placeholder="Presentation, topic..." th:value="${query}"><button class="btn compact-btn" type="submit">Search</button></form>
+        <form class="course-code-search" th:action="@{/materials}" method="get"><label class="catalog-search-label" for="materialCode">Search with a material code</label><input id="materialCode" class="catalog-search" type="search" name="code" placeholder="MAT-XXXXXXXX" th:value="${code}" required maxlength="12"><button class="btn btn-secondary compact-btn" type="submit">Find material</button></form>
+    </aside><section class="catalog-results"><div class="catalog-toolbar"><strong th:text="${code.isEmpty() ? (query.isEmpty() ? 'Published materials' : 'Search results') : 'Material search result'}">Published materials</strong><span th:if="${code.isEmpty()}" th:text="|Count - ${#lists.size(materials)}|">Count - 0</span></div>
+        <div class="course-list"><article class="course-row catalog-course" th:each="material, iter : ${materials}"><div class="course-index" th:text="${#numbers.formatInteger(iter.index + 1, 2)}">01</div><div class="course-main"><div class="catalog-course-title"><h2 th:text="${material.title}">Material title</h2><span class="difficulty-pill">Material</span></div><p class="course-code" th:text="|Code: ${material.materialCode}|">Code</p><p class="course-description catalog-description" th:text="${material.description}">Description</p><div class="course-meta"><span th:text="|${material.fileCount} file(s)|">Files</span><span th:text="|Shared by ${material.authorName}|">Author</span></div></div><div class="catalog-course-action"><a class="btn compact-btn" th:href="@{/materials/{id}(id=${material.id})}">Open material</a></div></article>
+            <div class="empty-state" th:if="${#lists.isEmpty(materials)}"><h2 th:text="${code.isEmpty() ? 'No materials found' : 'Material not found'}">No materials found</h2><p>Try a different search or share the first material.</p></div>
+        </div></section></div>
+</main></body>
+</html>

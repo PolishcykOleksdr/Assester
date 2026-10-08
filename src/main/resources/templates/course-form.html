@@ -36,7 +36,7 @@
     <section class="editor-layout" aria-labelledby="courseTitle">
         <header class="editor-heading">
             <h1 id="courseTitle">Course details</h1>
-            <p>Save your course as a draft first. Course materials will be added in a later step.</p>
+            <p>Save your course as a draft first. Choose which of your published materials to include; the list is alphabetical.</p>
         </header>
 
         <form class="editor-form surface" th:action="${formAction}" th:object="${courseForm}" method="post">
@@ -53,6 +53,16 @@
                 <textarea id="description" th:field="*{description}" rows="6" maxlength="3000" required></textarea>
                 <small class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></small>
             </div>
+
+            <fieldset class="form-group" th:if="${!#lists.isEmpty(materials)}">
+                <legend>Include published materials</legend>
+                <label class="material-choice" th:each="material : ${materials}">
+                    <input type="checkbox" name="materialIds" th:value="${material.id}"
+                           th:checked="${courseForm.materialIds != null and #lists.contains(courseForm.materialIds, material.id)}">
+                    <span><strong th:text="${material.title}">Material title</strong><br><small th:text="|${material.materialCode} · ${material.fileCount} file(s)|">Material info</small></span>
+                </label>
+            </fieldset>
+            <p class="subtitle" th:if="${#lists.isEmpty(materials)}">You can add materials after publishing them.</p>
 
             <div class="form-group">
                 <label for="accessType">Course access</label>

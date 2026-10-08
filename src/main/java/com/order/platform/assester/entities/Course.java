@@ -8,6 +8,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "courses")
@@ -58,6 +60,11 @@ public class Course {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("position ASC")
+    @Builder.Default
+    private List<CourseMaterial> courseMaterials = new ArrayList<>();
 
     @PrePersist
     void prePersist() {

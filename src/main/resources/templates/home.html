@@ -29,6 +29,7 @@
         </a>
         <div class="actions">
             <a th:href="@{/catalog}">Course catalog</a>
+            <a th:href="@{/materials}">Materials</a>
             <a th:href="@{/login}">Sign in</a>
             <a th:href="@{/register}">Create account</a>
         </div>
@@ -36,10 +37,11 @@
 
     <section class="home-hero" aria-labelledby="homeTitle">
         <div class="home-copy">
-            <h1 id="homeTitle">Your next course is closer.</h1>
-            <p>Explore published courses, or sign in to create and manage your own.</p>
+            <h1 id="homeTitle">Learning resources, shared.</h1>
+            <p>Explore courses and materials shared by the community, or sign in to publish your own.</p>
             <div class="home-actions">
                 <a th:href="@{/catalog}" class="btn">Browse courses</a>
+                <a th:href="@{/materials}" class="btn btn-secondary">Browse materials</a>
                 <a th:href="@{/login}" class="btn btn-secondary">Sign in</a>
                 <a th:href="@{/register}" class="btn btn-secondary">Create account</a>
             </div>
@@ -62,10 +64,10 @@
                 </svg>
                 </span>
             </div>
-            <p class="pass-title">The course library</p>
+            <p class="pass-title">The learning library</p>
             <p class="pass-value">Find a place to begin.</p>
             <div class="pass-footer">
-                <span>Browse published courses at your pace.</span>
+                <span>Browse shared resources and courses.</span>
                 <span class="pass-stamp" aria-hidden="true">↗</span>
             </div>
         </div>

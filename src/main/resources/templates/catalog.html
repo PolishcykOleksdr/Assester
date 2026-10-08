@@ -29,6 +29,7 @@
         </a>
         <div class="actions">
             <a th:href="@{/my/courses}">My courses</a>
+            <a th:href="@{/materials}">Materials</a>
             <a th:href="@{/login}">Sign in</a>
         </div>
     </nav>
@@ -94,6 +95,9 @@
                             <strong th:if="${course.accessType.name() == 'PAID'}"
                                     th:text="|${course.price} ${course.currency}|">0 UAH</strong>
                         </div>
+                        <ul class="course-material-links" th:if="${course.materialCount > 0}">
+                            <li th:each="link : ${course.courseMaterials}"><a th:href="@{/materials/{id}(id=${link.materialId})}" th:text="${link.title}">Included material</a></li>
+                        </ul>
                     </div>
                     <div class="catalog-course-action">
                         <span class="course-status">Published</span>
