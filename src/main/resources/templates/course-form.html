@@ -3,57 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course - Assester</title>
+    <meta name="theme-color" content="#f4f5ef">
+    <title>Course details — Assester</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
 <main class="container page-container">
-    <nav class="navbar"><a th:href="@{/}" class="brand">Assester</a><div class="actions"><a th:href="@{/my/courses}">My Courses</a></div></nav>
-    <section class="card">
-        <h1>Course Details</h1>
-        <p class="subtitle">Save your course as a draft first. Course materials will be added in a later step.</p>
-        <form th:action="${formAction}" th:object="${courseForm}" method="post">
+    <nav class="navbar" aria-label="Main navigation">
+        <a th:href="@{/}" class="brand">
+            <span class="brand-mark" aria-hidden="true">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                    <rect x="5" y="11" width="14" height="10" rx="2"/>
+                    <path d="m10 16 1.5 1.5L14 15"/>
+                </svg>
+            </span>
+            Assester
+        </a>
+        <div class="actions">
+            <a th:href="@{/catalog}">Course catalog</a>
+            <a th:href="@{/my/courses}">My courses</a>
+        </div>
+    </nav>
+
+    <section class="editor-layout" aria-labelledby="courseTitle">
+        <header class="editor-heading">
+            <h1 id="courseTitle">Course details</h1>
+            <p>Save your course as a draft first. Course materials will be added in a later step.</p>
+        </header>
+
+        <form class="editor-form surface" th:action="${formAction}" th:object="${courseForm}" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf != null}">
+
             <div class="form-group">
-                <label for="title">Course Title</label>
+                <label for="title">Course title</label>
                 <input id="title" type="text" th:field="*{title}" maxlength="120" required>
                 <small class="field-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
             </div>
+
             <div class="form-group">
                 <label for="description">Description</label>
                 <textarea id="description" th:field="*{description}" rows="6" maxlength="3000" required></textarea>
                 <small class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></small>
             </div>
+
             <div class="form-group">
-                <label for="accessType">Course Access</label>
+                <label for="accessType">Course access</label>
                 <select id="accessType" th:field="*{accessType}" required>
                     <option value="FREE">Free</option>
                     <option value="PAID">Paid</option>
                 </select>
                 <small class="field-error" th:if="${#fields.hasErrors('accessType')}" th:errors="*{accessType}"></small>
             </div>
-            <div class="form-group" id="priceGroup" th:hidden="${courseForm.accessType.name() != 'PAID'}">
+
+            <div class="form-group access-field" id="priceGroup" th:hidden="${courseForm.accessType.name() != 'PAID'}">
                 <label for="price">Price (UAH, for paid courses)</label>
-                <input id="price" type="number" th:field="*{price}" min="0.01" step="0.01" placeholder="For example, 499.00" th:required="${courseForm.accessType.name() == 'PAID'}">
+                <input id="price" type="number" th:field="*{price}"
+                       min="0.01" step="0.01"
+                       placeholder="For example, 499.00"
+                       th:required="${courseForm.accessType.name() == 'PAID'}">
                 <small class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></small>
             </div>
-            <button class="btn" type="submit">Save Draft</button>
+
+            <button class="btn" type="submit">Save draft</button>
         </form>
-        <a th:href="@{/my/courses}" class="link">Back to My Courses</a>
+
+        <a th:href="@{/my/courses}" class="editor-back">Back to my courses</a>
     </section>
 </main>
-<script>
-    const accessType = document.getElementById('accessType');
-    const priceGroup = document.getElementById('priceGroup');
-    const price = document.getElementById('price');
-    function syncPriceField() {
-        const paid = accessType.value === 'PAID';
-        priceGroup.hidden = !paid;
-        price.required = paid;
-        if (!paid) price.value = '';
-    }
-    accessType.addEventListener('change', syncPriceField);
-    syncPriceField();
-</script>
+
+<script defer th:src="@{/js/course-form.js}"></script>
 </body>
 </html>
