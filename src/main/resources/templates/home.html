@@ -1,31 +1,77 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Assester</title>
+    <meta name="theme-color" content="#102d36">
+    <title>Assester — access to learning</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-    <div class="container" style="max-width: 700px;">
-        <div class="navbar">
-            <a th:href="@{/}" class="brand">Assester</a>
-            <div class="actions">
-                <a th:href="@{/catalog}">Browse Courses</a>
-                <a th:href="@{/login}">Login</a>
-                <a th:href="@{/register}">Register</a>
+<main class="container home-layout">
+    <nav class="navbar" aria-label="Main navigation">
+        <a th:href="@{/}" class="brand">
+            <span class="brand-mark" aria-hidden="true">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                    <rect x="5" y="11" width="14" height="10" rx="2"/>
+                    <path d="m10 16 1.5 1.5L14 15"/>
+                </svg>
+            </span>
+            Assester
+        </a>
+        <div class="actions">
+            <a th:href="@{/catalog}">Course catalog</a>
+            <a th:href="@{/materials}">Materials</a>
+            <a th:href="@{/login}">Sign in</a>
+            <a th:href="@{/register}">Create account</a>
+        </div>
+    </nav>
+
+    <section class="home-hero" aria-labelledby="homeTitle">
+        <div class="home-copy">
+            <h1 id="homeTitle">Learning resources, shared.</h1>
+            <p>Explore courses and materials shared by the community, or sign in to publish your own.</p>
+            <div class="home-actions">
+                <a th:href="@{/catalog}" class="btn">Browse courses</a>
+                <a th:href="@{/materials}" class="btn btn-secondary">Browse materials</a>
+                <a th:href="@{/login}" class="btn btn-secondary">Sign in</a>
+                <a th:href="@{/register}" class="btn btn-secondary">Create account</a>
             </div>
         </div>
 
-        <div class="card hero">
-            <h2>Welcome to Assester</h2>
-            <p>Explore published courses, or sign in to create and manage your own.</p>
-            <a th:href="@{/catalog}" class="btn">Browse Courses</a>
-             <a th:href="@{/login}" class="btn">Sign In</a>
-            <a th:href="@{/register}" class="btn btn-secondary">Create Account</a>
+        <div class="access-pass" aria-label="Assester course access">
+            <div class="pass-topline">
+                <span>Assester · Learning access</span>
+                <span class="pass-glyph" aria-hidden="true">
+                    <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                    <rect x="5" y="11" width="14" height="10" rx="2"/>
+                </svg>
+                </span>
+            </div>
+            <p class="pass-title">The learning library</p>
+            <p class="pass-value">Find a place to begin.</p>
+            <div class="pass-footer">
+                <span>Browse shared resources and courses.</span>
+                <span class="pass-stamp" aria-hidden="true">↗</span>
+            </div>
         </div>
-    </div>
+    </section>
+</main>
 </body>
 </html>

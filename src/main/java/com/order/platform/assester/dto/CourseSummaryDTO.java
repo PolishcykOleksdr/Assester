@@ -4,6 +4,7 @@ import com.order.platform.assester.enums.CourseAccessType;
 import com.order.platform.assester.enums.CourseStatus;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public record CourseSummaryDTO(
         Long id,
@@ -14,5 +15,7 @@ public record CourseSummaryDTO(
         BigDecimal price,
         String currency,
         CourseStatus status,
-        String moderationComment
+        String moderationComment,
+        int materialCount,
+        List<CourseMaterialSummaryDTO> courseMaterials
 ) {}

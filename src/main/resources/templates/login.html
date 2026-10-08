@@ -1,23 +1,62 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Assester</title>
+    <meta name="theme-color" content="#102d36">
+    <title>Sign in — Assester</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h1>Welcome Back</h1>
-            <p class="subtitle">Sign in to your account to continue</p>
+<main class="auth-page">
+    <aside class="auth-aside">
+        <a th:href="@{/}" class="brand">
+            <span class="brand-mark" aria-hidden="true">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                    <rect x="5" y="11" width="14" height="10" rx="2"/>
+                    <path d="m10 16 1.5 1.5L14 15"/>
+                </svg>
+            </span>
+            Assester
+        </a>
+        <div class="auth-aside-copy">
+            <h2>A clear way back to your courses.</h2>
+            <p>Sign in to manage the courses you create and find your place in the catalog.</p>
+        </div>
+        <p class="auth-rule">Your learning space</p>
+    </aside>
 
-            <div th:if="${param.error}" class="alert alert-error">
+    <section class="auth-main" aria-labelledby="loginTitle">
+        <div class="auth-panel">
+            <span class="auth-mark" aria-hidden="true">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                    <rect x="5" y="11" width="14" height="10" rx="2"/>
+                    <path d="M12 15v2"/>
+                </svg>
+            </span>
+            <h1 id="loginTitle">Welcome back</h1>
+            <p class="subtitle">Sign in to your account to continue.</p>
+
+            <div th:if="${param.error}" class="alert alert-error" role="alert">
                 Invalid email or password. Please try again.
             </div>
-            <div th:if="${param.logout}" class="alert alert-success">
+            <div th:if="${param.logout}" class="alert alert-success" role="status">
                 You have been logged out successfully.
             </div>
 
@@ -42,11 +81,12 @@
                            required>
                 </div>
 
-                <button type="submit" class="btn">Sign In</button>
+                <button type="submit" class="btn">Sign in</button>
             </form>
 
-            <a th:href="@{/register}" class="link">Don't have an account? Register</a>
+            <a th:href="@{/register}" class="link">Don't have an account? Create one</a>
         </div>
-    </div>
+    </section>
+</main>
 </body>
 </html>

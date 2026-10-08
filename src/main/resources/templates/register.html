@@ -1,20 +1,58 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Assester</title>
+    <meta name="theme-color" content="#102d36">
+    <title>Create account — Assester</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h1>Create Account</h1>
-            <p class="subtitle">Fill in your details to get started</p>
+<main class="auth-page">
+    <aside class="auth-aside">
+        <a th:href="@{/}" class="brand">
+            <span class="brand-mark" aria-hidden="true">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                    <rect x="5" y="11" width="14" height="10" rx="2"/>
+                    <path d="m10 16 1.5 1.5L14 15"/>
+                </svg>
+            </span>
+            Assester
+        </a>
+        <div class="auth-aside-copy">
+            <h2>Make room for what you want to learn.</h2>
+            <p>Create an account to browse courses and manage the courses you build.</p>
+        </div>
+        <p class="auth-rule">A place to get started</p>
+    </aside>
 
-            <div th:if="${param.error}" class="alert alert-error">
+    <section class="auth-main" aria-labelledby="registerTitle">
+        <div class="auth-panel">
+            <span class="auth-mark" aria-hidden="true">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <circle cx="9" cy="8" r="4"/>
+                    <path d="M3 21v-2a6 6 0 0 1 12 0v2M19 8v6m-3-3h6"/>
+                </svg>
+            </span>
+            <h1 id="registerTitle">Create your account</h1>
+            <p class="subtitle">A few details, then you can get started.</p>
+
+            <div th:if="${param.error}" class="alert alert-error" role="alert">
                 <span th:text="${param.error}">Error message</span>
             </div>
 
@@ -45,11 +83,12 @@
                            required minlength="6">
                 </div>
 
-                <button type="submit" class="btn">Create Account</button>
+                <button type="submit" class="btn">Create account</button>
             </form>
 
-            <a th:href="@{/login}" class="link">Already have an account? Sign In</a>
+            <a th:href="@{/login}" class="link">Already have an account? Sign in</a>
         </div>
-    </div>
+    </section>
+</main>
 </body>
 </html>

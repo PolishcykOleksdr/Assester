@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>My materials — Assester</title><link rel="stylesheet" th:href="@{/css/main.css}"></head>
+<body><main class="container page-container">
+    <nav class="navbar"><a th:href="@{/}" class="brand">Assester</a><div class="actions"><a th:href="@{/materials}">Material catalog</a><a th:href="@{/my/courses}">My courses</a></div></nav>
+    <header class="workspace-heading"><div><h1>My materials</h1><p class="subtitle">Materials you have shared with the platform.</p></div><a th:href="@{/my/materials/new}" class="btn compact-btn">Share a material</a></header>
+    <div th:if="${#lists.isEmpty(materials)}" class="empty-state surface"><h2>No materials yet</h2><p>Share a presentation, document, or other learning resource.</p></div>
+    <div th:unless="${#lists.isEmpty(materials)}" class="workspace-list">
+        <article class="course-row" th:each="material : ${materials}"><div class="course-main"><h2 th:text="${material.title}">Material title</h2><p class="course-code" th:text="|Share code: ${material.materialCode}|">MAT-1234ABCD</p><p class="course-description" th:text="${material.description}">Description</p><div class="course-meta"><span th:text="|${material.fileCount} file(s)|">1 file</span><strong>Published</strong></div></div><div class="course-actions"><a class="btn btn-secondary compact-btn" th:href="@{/materials/{id}(id=${material.id})}">View shared page</a></div></article>
+    </div>
+</main></body>
+</html>

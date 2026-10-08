@@ -1,15 +1,31 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalog</title>
+    <meta name="theme-color" content="#102d36">
+    <title>Admin access — Assester</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="container">
-    <p>Admin</p>
-</div>
+<body class="status-page">
+<main class="status-panel" aria-labelledby="adminTitle">
+    <span class="status-symbol" aria-hidden="true">
+        <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                    <rect x="5" y="11" width="14" height="10" rx="2"/>
+                    <path d="M12 15v2"/>
+                </svg>
+    </span>
+    <h1 id="adminTitle">Admin area</h1>
+    <p>This page is reserved for administration.</p>
+    <a th:href="@{/}" class="btn">Back to home</a>
+</main>
 </body>
 </html>

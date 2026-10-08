@@ -2,11 +2,15 @@ package com.order.platform.assester.services;
 
 import com.order.platform.assester.dto.CourseFormDTO;
 import com.order.platform.assester.dto.CourseSummaryDTO;
+import com.order.platform.assester.dto.CourseMaterialSummaryDTO;
 import com.order.platform.assester.entities.Course;
+import com.order.platform.assester.entities.CourseMaterial;
+import com.order.platform.assester.entities.Material;
 import com.order.platform.assester.enums.CourseAccessType;
 import com.order.platform.assester.enums.CourseStatus;
 import com.order.platform.assester.repositories.CourseRepository;
 import com.order.platform.assester.repositories.UserRepository;
+import com.order.platform.assester.repositories.MaterialRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,7 @@ import java.util.UUID;
 public class CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
+    private final MaterialRepository materialRepository;
 
     @Transactional
     public List<CourseSummaryDTO> findMyCourses(String authorEmail) {
@@ -62,17 +67,18 @@ public class CourseService {
         form.setDescription(course.getDescription());
         form.setAccessType(course.getAccessType());
         form.setPrice(course.getPrice());
+        form.setMaterialIds(course.getCourseMaterials().stream().map(link -> link.getMaterial().getId()).toList());
         return form;
     }
 
     @Transactional
-    public Long createDraft(CourseFormDTO form, String authorEmail) {
+    public void createDraft(CourseFormDTO form, String authorEmail) {
         Course course = new Course();
         course.setAuthor(userRepository.findByEmail(authorEmail)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
         applyForm(course, form);
         course.setStatus(CourseStatus.DRAFT);
-        return courseRepository.save(course).getId();
+        courseRepository.save(course);
     }
 
     @Transactional
@@ -114,6 +120,26 @@ public class CourseService {
         course.setAccessType(form.getAccessType());
         course.setPrice(form.getAccessType() == CourseAccessType.PAID ? form.getPrice() : null);
         course.setCurrency("UAH");
+        List<Long> ids = form.getMaterialIds() == null ? List.of() : form.getMaterialIds().stream().distinct().toList();
+        if (!ids.isEmpty()) {
+            List<Material> materials = materialRepository.findAllByIdInAndAuthorEmailAndStatus(
+                    ids, course.getAuthor().getEmail(), com.order.platform.assester.enums.MaterialStatus.PUBLISHED);
+            if (materials.size() != ids.size()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Select only your published materials");
+            }
+            course.getCourseMaterials().clear();
+            for (int index = 0; index < ids.size(); index++) {
+                Long id = ids.get(index);
+                Material material = materials.stream().filter(item -> item.getId().equals(id)).findFirst().orElseThrow();
+                CourseMaterial link = new CourseMaterial();
+                link.setCourse(course);
+                link.setMaterial(material);
+                link.setPosition(index);
+                course.getCourseMaterials().add(link);
+            }
+        } else {
+            course.getCourseMaterials().clear();
+        }
     }
 
     private void validatePrice(CourseAccessType accessType, java.math.BigDecimal price) {
@@ -131,6 +157,10 @@ public class CourseService {
     private static CourseSummaryDTO toSummary(Course course) {
         return new CourseSummaryDTO(course.getId(), course.getCourseCode(), course.getTitle(), course.getDescription(),
                 course.getAccessType(), course.getPrice(), course.getCurrency(), course.getStatus(),
-                course.getModerationComment());
+                course.getModerationComment(), course.getCourseMaterials().size(),
+                course.getCourseMaterials().stream()
+                        .map(link -> new CourseMaterialSummaryDTO(link.getMaterial().getTitle(),
+                                link.getMaterial().getMaterialCode(), link.getMaterial().getId(), link.getPosition()))
+                        .toList());
     }
 }

@@ -3,66 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Catalog — Assester</title>
+    <meta name="theme-color" content="#f4f5ef">
+    <title>Course catalog — Assester</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body class="catalog-body">
+<body>
 <main class="container page-container catalog-page">
-    <nav class="navbar"><a th:href="@{/}" class="brand">Assester</a><div class="actions"><a th:href="@{/my/courses}">My Courses</a></div></nav>
+    <nav class="navbar" aria-label="Main navigation">
+        <a th:href="@{/}" class="brand">
+            <span class="brand-mark" aria-hidden="true">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                    <rect x="5" y="11" width="14" height="10" rx="2"/>
+                    <path d="m10 16 1.5 1.5L14 15"/>
+                </svg>
+            </span>
+            Assester
+        </a>
+        <div class="actions">
+            <a th:href="@{/my/courses}">My courses</a>
+            <a th:href="@{/materials}">Materials</a>
+            <a th:href="@{/login}">Sign in</a>
+        </div>
+    </nav>
+
     <header class="catalog-heading">
-        <div><p class="eyebrow">ASSESTER LEARN</p><h1>Course Catalog</h1><p>Find your next topic to learn.</p></div>
-        <a class="btn compact-btn" th:href="@{/my/courses/new}">Create a Course</a>
+        <div>
+            <h1>Course catalog</h1>
+            <p>Find a course that fits what you want to learn.</p>
+        </div>
+        <a class="btn compact-btn" th:href="@{/my/courses/new}">Create a course</a>
     </header>
+
     <div class="catalog-layout">
-        <aside class="catalog-sidebar">
+        <aside class="catalog-sidebar" aria-label="Course search">
+            <h2>Find a course</h2>
+
             <form class="course-code-search" th:action="@{/catalog}" method="get">
                 <label class="catalog-search-label" for="courseSearch">Search by title or description</label>
                 <input id="courseSearch" class="catalog-search" type="search" name="query"
-                       placeholder="Course title or description" th:value="${searchQuery}" autocomplete="off">
+                       placeholder="Course title or description"
+                       th:value="${searchQuery}"
+                       autocomplete="off">
                 <button class="btn compact-btn" type="submit">Search</button>
             </form>
+
             <form class="course-code-search" th:action="@{/catalog}" method="get">
-                <label class="catalog-search-label" for="courseCode">Find a course by code</label>
-                <input id="courseCode" class="catalog-search" type="search" name="code" placeholder="CRS-XXXXXXXX"
-                       th:value="${searchCode}" required maxlength="12" autocomplete="off">
-                <button class="btn compact-btn" type="submit">Find course</button>
+                <label class="catalog-search-label" for="courseCode">Search with a course code</label>
+                <input id="courseCode" class="catalog-search" type="search" name="code"
+                       placeholder="CRS-XXXXXXXX"
+                       th:value="${searchCode}"
+                       required maxlength="12"
+                       autocomplete="off">
+                <button class="btn btn-secondary compact-btn" type="submit">Find course</button>
             </form>
         </aside>
-        <section class="catalog-results">
+
+        <section class="catalog-results" aria-label="Course results">
             <div class="catalog-toolbar">
                 <div>
                     <strong th:text="${!searchCode.isEmpty() ?
-                    'Course search result' :
-                    (!searchQuery.isEmpty() ? 'Search results' : 'Published courses')
-                    }">Published courses
-                    </strong>
-                    <span th:if="${searchCode.isEmpty()}" th:text="|Count - ${#lists.size(displayCourses)}|">Count -  0</span>
+                        'Course search result' :
+                        (!searchQuery.isEmpty() ? 'Search results' : 'Published courses')
+                    }">Published courses</strong>
+                    <span th:if="${searchCode.isEmpty()}"
+                          th:text="|Count - ${#lists.size(displayCourses)}|">Count - 0</span>
                 </div>
                 <span class="catalog-sort"
-                      th:if="${searchCode.isEmpty() and searchQuery.isEmpty()}">Newest
-                </span>
+                      th:if="${searchCode.isEmpty() and searchQuery.isEmpty()}">Newest</span>
             </div>
+
             <div class="course-list catalog-course-list" id="courseList">
                 <article class="course-row catalog-course" th:each="course, iter : ${displayCourses}">
                     <div class="course-index" th:text="${#numbers.formatInteger(iter.index + 1, 2)}">01</div>
                     <div class="course-main">
-                        <div class="catalog-course-title"><h2 th:text="${course.title}">Course title</h2><span class="difficulty-pill">Course</span></div>
+                        <div class="catalog-course-title">
+                            <h2 th:text="${course.title}">Course title</h2>
+                            <span class="difficulty-pill">Course</span>
+                        </div>
                         <p class="course-code" th:text="|Course code: ${course.courseCode}|">Course code: CRS-1234ABCD</p>
                         <p class="course-description catalog-description" th:text="${course.description}">Course description</p>
                         <div class="course-meta">
-                            <span
-                                th:text="${course.accessType.name() == 'FREE' ? 'Free' : 'Paid'}">Free
-                            </span>
+                            <span th:text="${course.accessType.name() == 'FREE' ? 'Free' : 'Paid'}">Free</span>
                             <strong th:if="${course.accessType.name() == 'PAID'}"
-                                    th:text="|${course.price} ${course.currency}|">0 UAH
-                            </strong>
+                                    th:text="|${course.price} ${course.currency}|">0 UAH</strong>
                         </div>
+                        <ul class="course-material-links" th:if="${course.materialCount > 0}">
+                            <li th:each="link : ${course.courseMaterials}"><a th:href="@{/materials/{id}(id=${link.materialId})}" th:text="${link.title}">Included material</a></li>
+                        </ul>
                     </div>
-                    <div class="catalog-course-action"><span class="course-status">Published</span><button class="btn compact-btn" type="button" disabled>Coming soon</button></div>
+                    <div class="catalog-course-action">
+                        <span class="course-status">Published</span>
+                        <button class="btn compact-btn" type="button" disabled>Coming soon</button>
+                    </div>
                 </article>
-                <div class="empty-state" th:if="${searchCode.isEmpty() and searchQuery.isEmpty() and #lists.isEmpty(displayCourses)}"><h2>No courses yet</h2><p>Published courses will appear here after moderation.</p></div>
-                <div class="empty-state" th:if="${!searchCode.isEmpty() and searchedCourse == null}"><h2>Course not found</h2><p>Check the code and try again. Only published courses can be found.</p></div>
-                <div class="empty-state" th:if="${searchCode.isEmpty() and !searchQuery.isEmpty() and #lists.isEmpty(displayCourses)}"><h2>No matching courses</h2><p>Try another title or description.</p></div>
+
+                <div class="empty-state"
+                     th:if="${searchCode.isEmpty() and searchQuery.isEmpty() and #lists.isEmpty(displayCourses)}">
+                    <h2>No courses yet</h2>
+                    <p>Published courses will appear here after moderation.</p>
+                </div>
+                <div class="empty-state" th:if="${!searchCode.isEmpty() and searchedCourse == null}">
+                    <h2>Course not found</h2>
+                    <p>Check the code and try again. Only published courses can be found.</p>
+                </div>
+                <div class="empty-state"
+                     th:if="${searchCode.isEmpty() and !searchQuery.isEmpty() and #lists.isEmpty(displayCourses)}">
+                    <h2>No matching courses</h2>
+                    <p>Try another title or description.</p>
+                </div>
             </div>
         </section>
     </div>
