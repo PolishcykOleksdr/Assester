@@ -1,7 +1,6 @@
 package com.order.platform.assester.controllers;
 
 import com.order.platform.assester.dto.RegisterUserDTO;
-import com.order.platform.assester.logging.EmailMasker;
 import com.order.platform.assester.logging.annotation.Audited;
 import com.order.platform.assester.services.AuthService;
 import com.order.platform.assester.services.UserService;
@@ -44,7 +43,6 @@ public class RegisterController {
         }
 
         model.addAttribute("registerUserDTO", new RegisterUserDTO());
-        log.debug("Returning register page");
         return "register";
     }
 
@@ -56,14 +54,11 @@ public class RegisterController {
             HttpServletResponse response
     ) {
         if(bindingResult.hasErrors()){
-            log.warn("Validation failed during registration for email={}. Errors count={}",
-                    EmailMasker.mask(registerUserDTO.getEmail()), bindingResult.getErrorCount());
+            log.warn("Registration form validation failed; errorCount={}", bindingResult.getErrorCount());
             return "register";
         }
 
-        Long userId = userService.createUser(registerUserDTO);
-        log.info("User with id {} registered successfully", userId);
-
+        userService.createUser(registerUserDTO);
         String cookie = authService.authenticateUser(
                 registerUserDTO.getEmail(),
                 registerUserDTO.getPassword());

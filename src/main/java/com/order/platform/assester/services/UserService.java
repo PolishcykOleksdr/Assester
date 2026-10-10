@@ -30,8 +30,6 @@ public class UserService {
         return userRepository
                 .findByEmail(email)
                 .orElseThrow(() -> {
-                    log.warn("User lookup failed: no user registered with email {}",
-                            EmailMasker.mask(email));
                     return new UserNotFoundException(
                             String.format("User with email %s not found", email)
                     );
@@ -41,8 +39,6 @@ public class UserService {
     @Audited
     public Long createUser(RegisterUserDTO registerUserDTO) {
         if (userRepository.existsByEmail(registerUserDTO.getEmail())) {
-            log.warn("Registration rejected: email {} is already taken",
-                    EmailMasker.mask(registerUserDTO.getEmail()));
             throw new UserAlreadyExistsException(
                     String.format("User with email %s already exists",
                             registerUserDTO.getEmail())

@@ -27,12 +27,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleAccessDenied(AccessDeniedException ex, Model model, HttpServletRequest request) {
-        log.warn("Access denied on {} {} from user={}: {}",
+        log.warn("Access denied on {} {} from user={} ({})",
                 request.getMethod(), request.getRequestURI(),
-                MDC.get(LogKeys.USER.getKey()), ex.getMessage());
+                MDC.get(LogKeys.USER.getKey()), ex.getClass().getSimpleName());
         model.addAttribute("status", HttpStatus.FORBIDDEN.value());
         model.addAttribute("error", HttpStatus.FORBIDDEN.getReasonPhrase());
-        model.addAttribute("message", ex.getMessage());
+        model.addAttribute("message", "You do not have permission to access this page.");
         return "error";
     }
 

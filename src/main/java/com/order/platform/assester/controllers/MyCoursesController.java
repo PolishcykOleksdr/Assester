@@ -2,9 +2,11 @@ package com.order.platform.assester.controllers;
 
 import com.order.platform.assester.dto.CourseFormDTO;
 import com.order.platform.assester.logging.annotation.Audited;
+import com.order.platform.assester.logging.EmailMasker;
 import com.order.platform.assester.services.CourseService;
 import com.order.platform.assester.services.MaterialService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@Slf4j
 @RequestMapping("/my/courses")
 @RequiredArgsConstructor
 public class MyCoursesController {
@@ -45,6 +48,7 @@ public class MyCoursesController {
             return "course-form";
         }
         courseService.createDraft(form, authentication.getName());
+        log.info("Course draft created by user {}", EmailMasker.mask(authentication.getName()));
         return "redirect:/my/courses";
     }
 
@@ -68,6 +72,7 @@ public class MyCoursesController {
             return "course-form";
         }
         courseService.updateDraft(courseId, form, authentication.getName());
+        log.info("Course draft {} updated by user {}", courseId, EmailMasker.mask(authentication.getName()));
         return "redirect:/my/courses";
     }
 
@@ -75,6 +80,7 @@ public class MyCoursesController {
     @PostMapping("/{courseId}/submit")
     public String submit(@PathVariable Long courseId, Authentication authentication) {
         courseService.submitForReview(courseId, authentication.getName());
+        log.info("Course {} submitted for review by user {}", courseId, EmailMasker.mask(authentication.getName()));
         return "redirect:/my/courses";
     }
 }

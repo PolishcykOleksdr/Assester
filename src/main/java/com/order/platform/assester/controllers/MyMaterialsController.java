@@ -1,9 +1,11 @@
 package com.order.platform.assester.controllers;
 
 import com.order.platform.assester.dto.MaterialFormDTO;
+import com.order.platform.assester.logging.EmailMasker;
 import com.order.platform.assester.logging.annotation.Audited;
 import com.order.platform.assester.services.MaterialService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Controller
+@Slf4j
 @RequestMapping("/my/materials")
 @RequiredArgsConstructor
 public class MyMaterialsController {
@@ -44,6 +47,9 @@ public class MyMaterialsController {
                           @RequestParam("files") List<MultipartFile> files, Authentication authentication, Model model) {
         if (bindingResult.hasErrors()) return "material-form";
         materialService.publish(form.getTitle(), form.getDescription(), files, authentication.getName());
+        long uploadedFileCount = files.stream().filter(file -> !file.isEmpty()).count();
+        log.info("Material published by user {}; fileCount={}",
+                EmailMasker.mask(authentication.getName()), uploadedFileCount);
         return "redirect:/my/materials";
     }
 }

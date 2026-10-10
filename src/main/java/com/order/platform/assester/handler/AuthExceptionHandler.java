@@ -23,12 +23,12 @@ public class AuthExceptionHandler {
     @ExceptionHandler(exception = AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public String handleAuthExc(Exception ex, Model model, HttpServletRequest request) {
-        log.warn("Authentication failure on {} {}: {} - {}",
+        log.warn("Authentication failure on {} {}: {}",
                 request.getMethod(), request.getRequestURI(),
-                ex.getClass().getSimpleName(), ex.getMessage());
+                ex.getClass().getSimpleName());
         model.addAttribute("status", HttpStatus.UNAUTHORIZED.value());
         model.addAttribute("error", HttpStatus.UNAUTHORIZED.getReasonPhrase());
-        model.addAttribute("message", ex.getMessage());
+        model.addAttribute("message", "Authentication failed. Please check your credentials and try again.");
         return "error";
     }
 }

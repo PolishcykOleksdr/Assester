@@ -31,3 +31,17 @@ jwt:
   expiration: ${JWT_EXPIRATION:86400000}
   token-name: ${AUTH_TOKEN_NAME:AUTH_TOKEN}
   secure-cookie: ${JWT_SECURE_COOKIE:false}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus, metrics
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %msg%n"

@@ -32,7 +32,6 @@ public class LogoutController {
                 ? EmailMasker.mask(authentication.getName())
                 : "anonymous";
 
-        log.debug("POST /logout request for user={}", user);
         String expiredCookie = authService.logoutUser();
         response.addHeader(HttpHeaders.SET_COOKIE, expiredCookie);
 

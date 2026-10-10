@@ -24,22 +24,22 @@ public class UserExceptionHandler {
     @ExceptionHandler(value = UserAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public String handleAlreadyExists(Exception ex, Model model, HttpServletRequest request) {
-        log.warn("Registration conflict on {} {}: {}",
-                request.getMethod(), request.getRequestURI(), ex.getMessage());
+        log.warn("Registration conflict on {} {}",
+                request.getMethod(), request.getRequestURI());
         model.addAttribute("status", HttpStatus.CONFLICT.value());
         model.addAttribute("error", HttpStatus.CONFLICT.getReasonPhrase());
-        model.addAttribute("message", ex.getMessage());
+        model.addAttribute("message", "An account with these details already exists.");
         return "error";
     }
 
     @ExceptionHandler(value = UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFound(Exception ex, Model model, HttpServletRequest request) {
-        log.warn("User not found on {} {}: {}",
-                request.getMethod(), request.getRequestURI(), ex.getMessage());
+        log.warn("User not found on {} {}",
+                request.getMethod(), request.getRequestURI());
         model.addAttribute("status", HttpStatus.NOT_FOUND.value());
         model.addAttribute("error", HttpStatus.NOT_FOUND.getReasonPhrase());
-        model.addAttribute("message", ex.getMessage());
+        model.addAttribute("message", "The requested user was not found.");
         return "error";
     }
 }

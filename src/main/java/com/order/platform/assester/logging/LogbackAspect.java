@@ -29,7 +29,7 @@ public class LogbackAspect {
             log.debug("<- {} completed in {} ms", signature, System.currentTimeMillis() - startedAt);
             return result;
         } catch (Throwable throwable) {
-            log.warn("{} failed after {} ms with {}",
+            log.debug("{} failed after {} ms with {}",
                     signature,
                     System.currentTimeMillis() - startedAt,
                     throwable.getClass().getSimpleName());
