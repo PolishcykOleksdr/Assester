@@ -8,6 +8,7 @@ import com.order.platform.assester.entities.CourseMaterial;
 import com.order.platform.assester.entities.Material;
 import com.order.platform.assester.enums.CourseAccessType;
 import com.order.platform.assester.enums.CourseStatus;
+import com.order.platform.assester.exceptions.course.CourseNotFoundExcpetion;
 import com.order.platform.assester.repositories.CourseRepository;
 import com.order.platform.assester.repositories.UserRepository;
 import com.order.platform.assester.repositories.MaterialRepository;
@@ -55,7 +56,7 @@ public class CourseService {
     public CourseSummaryDTO findPublishedCourseByCode(String courseCode) {
         return courseRepository.findByCourseCodeIgnoreCaseAndStatus(courseCode.trim(), CourseStatus.PUBLISHED)
                 .map(CourseService::toSummary)
-                .orElse(null);
+                .orElseThrow(() -> new CourseNotFoundExcpetion("Course with code " + courseCode + " not found"));
     }
 
     @Transactional(readOnly = true)
@@ -104,7 +105,7 @@ public class CourseService {
 
     private Course findOwnedCourse(Long id, String email) {
         return courseRepository.findByIdAndAuthorEmail(id, email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new CourseNotFoundExcpetion("Course with id " + id + " not found"));
     }
 
     private void ensureEditable(Course course) {

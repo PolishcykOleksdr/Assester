@@ -21,7 +21,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @ControllerAdvice
-@Order(Ordered.LOWEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = AccessDeniedException.class)

@@ -6,6 +6,9 @@ import com.order.platform.assester.services.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -44,5 +47,13 @@ public class CatalogController {
         }
         model.addAttribute("displayCourses", displayCourses);
         return "catalog";
+    }
+
+    @Audited
+    @GetMapping("/{courseCode}")
+    public String getCourseDetails(@PathVariable String courseCode, Model model) {
+        CourseSummaryDTO course = courseService.findPublishedCourseByCode(courseCode);
+        model.addAttribute("course", course);
+        return "course-details";
     }
 }

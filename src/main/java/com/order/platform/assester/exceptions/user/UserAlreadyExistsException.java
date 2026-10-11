@@ -1,4 +1,4 @@
-package com.order.platform.assester.exceptions;
+package com.order.platform.assester.exceptions.user;
 
 /**
  * author: user,

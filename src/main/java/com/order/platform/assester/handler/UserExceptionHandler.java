@@ -1,7 +1,7 @@
 package com.order.platform.assester.handler;
 
-import com.order.platform.assester.exceptions.UserAlreadyExistsException;
-import com.order.platform.assester.exceptions.UserNotFoundException;
+import com.order.platform.assester.exceptions.user.UserAlreadyExistsException;
+import com.order.platform.assester.exceptions.user.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
