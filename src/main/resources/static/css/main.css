@@ -279,6 +279,14 @@ h2 { font-size: 1.45rem; font-weight: 750; }
 .course-material-links { margin: .8rem 0 0; padding-left: 1.25rem; color: var(--muted); font-size: .84rem; }
 .catalog-course-action { min-width: 7rem; display: flex; flex-direction: column; align-items: flex-end; gap: .6rem; }
 .catalog-course-action .btn { font-size: .8rem; }
+.course-details { width: min(100%, 55rem); margin: 2rem auto; padding: clamp(1.25rem, 4vw, 2.5rem); }
+.course-details-heading { margin-top: 1.5rem; }
+.course-details-heading h1 { margin: .4rem 0 .7rem; font-size: clamp(2rem, 5vw, 3.25rem); }
+.course-details-section { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.course-details-section h2 { margin: 0; font-size: 1.25rem; }
+.course-details-materials { display: grid; gap: .6rem; margin: 1rem 0 0; padding-left: 1.5rem; }
+.course-details-materials li { padding-left: .25rem; }
+.course-details-materials a { color: var(--teal-deep); font-weight: 700; }
 .course-status { color: var(--success); font-size: .74rem; font-weight: 700; }
 .empty-state { padding: 3rem 1.5rem; color: var(--muted); text-align: center; }
 .empty-state h2 { margin-bottom: .4rem; color: var(--ink); }

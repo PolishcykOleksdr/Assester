@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title th:text="|${material.title} — Assester|">Material — Assester</title><link rel="stylesheet" th:href="@{/css/main.css}"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title th:text="|${material.title} - Assester|">Material - Assester</title><link rel="stylesheet" th:href="@{/css/main.css}"></head>
 <body><main class="container page-container">
     <nav class="navbar"><a th:href="@{/}" class="brand">Assester</a><div class="actions"><a th:href="@{/materials}">Material library</a><a th:href="@{/catalog}">Course catalog</a></div></nav>
     <section class="editor-layout"><header class="editor-heading"><span class="course-code" th:text="|Share code: ${material.materialCode}|">MAT-1234ABCD</span><h1 th:text="${material.title}">Material title</h1><p th:text="${material.description}">Description</p><p class="subtitle" th:text="|Shared by ${material.authorName}|">Author</p></header>

@@ -2,8 +2,8 @@ package com.order.platform.assester.services;
 
 import com.order.platform.assester.dto.RegisterUserDTO;
 import com.order.platform.assester.entities.User;
-import com.order.platform.assester.exceptions.UserAlreadyExistsException;
-import com.order.platform.assester.exceptions.UserNotFoundException;
+import com.order.platform.assester.exceptions.user.UserAlreadyExistsException;
+import com.order.platform.assester.exceptions.user.UserNotFoundException;
 import com.order.platform.assester.logging.EmailMasker;
 import com.order.platform.assester.logging.annotation.Audited;
 import com.order.platform.assester.mapper.UserMapper;
@@ -30,8 +30,6 @@ public class UserService {
         return userRepository
                 .findByEmail(email)
                 .orElseThrow(() -> {
-                    log.warn("User lookup failed: no user registered with email {}",
-                            EmailMasker.mask(email));
                     return new UserNotFoundException(
                             String.format("User with email %s not found", email)
                     );
@@ -39,10 +37,8 @@ public class UserService {
     }
 
     @Audited
-    public Long createUser(RegisterUserDTO registerUserDTO) {
+    public void createUser(RegisterUserDTO registerUserDTO) {
         if (userRepository.existsByEmail(registerUserDTO.getEmail())) {
-            log.warn("Registration rejected: email {} is already taken",
-                    EmailMasker.mask(registerUserDTO.getEmail()));
             throw new UserAlreadyExistsException(
                     String.format("User with email %s already exists",
                             registerUserDTO.getEmail())
@@ -55,6 +51,5 @@ public class UserService {
         Long savedId = userRepository.save(user).getId();
         log.info("User with id {} has been created for email {}",
                 savedId, EmailMasker.mask(user.getEmail()));
-        return savedId;
     }
 }

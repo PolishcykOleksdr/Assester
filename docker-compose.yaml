@@ -20,6 +20,8 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10s
+    networks:
+      - monitoring
 
   app:
     build:
@@ -28,14 +30,12 @@ services:
     container_name: assester-app
     restart: unless-stopped
     volumes:
-      - ./logs:/app/logs
       - ./uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
-      LOG_FOLDER: /app/logs
       SPRING_DATASOURCE_URL: ${POSTGRES_URL:-jdbc:postgresql://postgres:5432/assester}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-rootroot}
@@ -56,6 +56,52 @@ services:
       timeout: 5s
       retries: 5
       start_period: 45s
+    networks:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: assester-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoring
+
+  loki:
+    image: grafana/loki:latest
+    container_name: assester-loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - monitoring
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: assester-promtail
+    volumes:
+      - ./promtail.yaml:/etc/promtail/promtail.yaml
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/promtail.yaml
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: assester-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - monitoring
 
 volumes:
   postgres_data:
+
+networks:
+  monitoring:
+    driver: bridge

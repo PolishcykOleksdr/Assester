@@ -4,10 +4,11 @@ import com.order.platform.assester.logging.annotation.Audited;
 import com.order.platform.assester.dto.CourseSummaryDTO;
 import com.order.platform.assester.services.CourseService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * date: 02.10.2026
  */
 
-@Slf4j
 @Controller
 @RequestMapping("/catalog")
 @RequiredArgsConstructor
@@ -28,12 +28,9 @@ public class CatalogController {
 
     @Audited
     @GetMapping
-    public String getCatalogPage(Authentication authentication,
-                                 @RequestParam(required = false) String code,
+    public String getCatalogPage(@RequestParam(required = false) String code,
                                  @RequestParam(required = false) String query,
                                  Model model) {
-        log.debug("Catalog page requested by {}", authentication != null ? authentication.getName() : "anonymous visitor");
-
         model.addAttribute("searchCode", code == null ? "" : code.trim());
         model.addAttribute("searchQuery", query == null ? "" : query.trim());
 
@@ -50,5 +47,13 @@ public class CatalogController {
         }
         model.addAttribute("displayCourses", displayCourses);
         return "catalog";
+    }
+
+    @Audited
+    @GetMapping("/{courseCode}")
+    public String getCourseDetails(@PathVariable String courseCode, Model model) {
+        CourseSummaryDTO course = courseService.findPublishedCourseByCode(courseCode);
+        model.addAttribute("course", course);
+        return "course-details";
     }
 }

@@ -1,7 +1,6 @@
 package com.order.platform.assester.controllers;
 
 import com.order.platform.assester.dto.LoginUserDTO;
-import com.order.platform.assester.logging.EmailMasker;
 import com.order.platform.assester.logging.annotation.Audited;
 import com.order.platform.assester.services.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,14 +33,10 @@ public class LoginController {
     @Audited
     @GetMapping
     public String getLoginPage(Model model, Authentication authentication) {
-        log.debug("GET /login request received");
         if(authentication != null
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken)
         ){
-            log.info("Authenticated user '{}' attempted to access login page. Redirecting to home.",
-                    EmailMasker.mask(authentication.getName())
-            );
             return "redirect:catalog";
         }
 
@@ -56,10 +51,8 @@ public class LoginController {
             BindingResult bindingResult,
             HttpServletResponse response
     ) {
-        log.debug("POST /login request for email={}", EmailMasker.mask(loginUserDTO.getEmail()));
         if(bindingResult.hasErrors()){
-            log.warn("Validation failed during login attempt for email={}. Errors count={}",
-                    EmailMasker.mask(loginUserDTO.getEmail()), bindingResult.getErrorCount());
+            log.warn("Login form validation failed; errorCount={}", bindingResult.getErrorCount());
             return "login";
         }
 
