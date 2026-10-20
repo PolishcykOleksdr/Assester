@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UserExceptionHandler {
     @ExceptionHandler(value = UserAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public String handleAlreadyExists(Exception ex, Model model, HttpServletRequest request) {
+    public String handleAlreadyExists(UserAlreadyExistsException ex, Model model, HttpServletRequest request) {
         log.warn("Registration conflict on {} {}",
                 request.getMethod(), request.getRequestURI());
         model.addAttribute("status", HttpStatus.CONFLICT.value());
@@ -34,7 +34,7 @@ public class UserExceptionHandler {
 
     @ExceptionHandler(value = UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleNotFound(Exception ex, Model model, HttpServletRequest request) {
+    public String handleNotFound(UserNotFoundException ex, Model model, HttpServletRequest request) {
         log.warn("User not found on {} {}",
                 request.getMethod(), request.getRequestURI());
         model.addAttribute("status", HttpStatus.NOT_FOUND.value());
@@ -43,3 +43,4 @@ public class UserExceptionHandler {
         return "error";
     }
 }
+

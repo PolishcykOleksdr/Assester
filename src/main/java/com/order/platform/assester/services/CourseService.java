@@ -9,14 +9,15 @@ import com.order.platform.assester.entities.Material;
 import com.order.platform.assester.enums.CourseAccessType;
 import com.order.platform.assester.enums.CourseStatus;
 import com.order.platform.assester.exceptions.course.CourseNotFoundExcpetion;
+import com.order.platform.assester.exceptions.course.CourseNotEditableException;
+import com.order.platform.assester.exceptions.course.InvalidCourseException;
+import com.order.platform.assester.exceptions.user.UserNotFoundException;
 import com.order.platform.assester.repositories.CourseRepository;
 import com.order.platform.assester.repositories.UserRepository;
 import com.order.platform.assester.repositories.MaterialRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -76,7 +77,7 @@ public class CourseService {
     public void createDraft(CourseFormDTO form, String authorEmail) {
         Course course = new Course();
         course.setAuthor(userRepository.findByEmail(authorEmail)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
+                .orElseThrow(() -> new UserNotFoundException("Author with email " + authorEmail + " was not found")));
         applyForm(course, form);
         course.setStatus(CourseStatus.DRAFT);
         courseRepository.save(course);
@@ -96,7 +97,7 @@ public class CourseService {
         Course course = findOwnedCourse(courseId, authorEmail);
         ensureEditable(course);
         if (course.getTitle().isBlank() || course.getDescription().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please fill in all required fields");
+            throw new InvalidCourseException("Please fill in all required fields");
         }
         validatePrice(course.getAccessType(), course.getPrice());
         course.setStatus(CourseStatus.PENDING_REVIEW);
@@ -110,7 +111,7 @@ public class CourseService {
 
     private void ensureEditable(Course course) {
         if (course.getStatus() != CourseStatus.DRAFT && course.getStatus() != CourseStatus.REJECTED) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "You can`t edit this course right now");
+            throw new CourseNotEditableException("You can't edit this course right now");
         }
     }
 
@@ -126,7 +127,7 @@ public class CourseService {
             List<Material> materials = materialRepository.findAllByIdInAndAuthorEmailAndStatus(
                     ids, course.getAuthor().getEmail(), com.order.platform.assester.enums.MaterialStatus.PUBLISHED);
             if (materials.size() != ids.size()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Select only your published materials");
+                throw new InvalidCourseException("Select only your published materials");
             }
             course.getCourseMaterials().clear();
             for (int index = 0; index < ids.size(); index++) {
@@ -145,7 +146,7 @@ public class CourseService {
 
     private void validatePrice(CourseAccessType accessType, java.math.BigDecimal price) {
         if (accessType == CourseAccessType.PAID && (price == null || price.signum() <= 0)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please specify price for paid courses");
+            throw new InvalidCourseException("Please specify price for paid courses");
         }
     }
 

@@ -5,18 +5,20 @@ import com.order.platform.assester.dto.MaterialSummaryDTO;
 import com.order.platform.assester.entities.Material;
 import com.order.platform.assester.entities.MaterialFile;
 import com.order.platform.assester.enums.MaterialStatus;
+import com.order.platform.assester.exceptions.material.InvalidMaterialException;
+import com.order.platform.assester.exceptions.material.MaterialNotFoundException;
+import com.order.platform.assester.exceptions.material.MaterialStorageException;
+import com.order.platform.assester.exceptions.user.UserNotFoundException;
 import com.order.platform.assester.repositories.MaterialRepository;
 import com.order.platform.assester.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -56,38 +58,38 @@ public class MaterialService {
     @Transactional(readOnly = true)
     public MaterialSummaryDTO findPublishedById(Long id) {
         return materialRepository.findByIdAndStatus(id, MaterialStatus.PUBLISHED).map(MaterialService::toSummary)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new MaterialNotFoundException("Published material with id " + id + " was not found"));
     }
 
     @Transactional(readOnly = true)
     public List<MaterialFileDTO> getPublishedFiles(Long materialId) {
         Material material = materialRepository.findByIdAndStatus(materialId, MaterialStatus.PUBLISHED)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new MaterialNotFoundException("Published material with id " + materialId + " was not found"));
         return material.getFiles().stream().map(MaterialService::toFileDTO).toList();
     }
 
     @Transactional(readOnly = true)
     public Resource getPublishedFile(Long materialId, Long fileId) {
         Material material = materialRepository.findByIdAndStatus(materialId, MaterialStatus.PUBLISHED)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new MaterialNotFoundException("Published material with id " + materialId + " was not found"));
         MaterialFile file = material.getFiles().stream().filter(candidate -> candidate.getId().equals(fileId)).findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new MaterialNotFoundException("File with id " + fileId + " was not found"));
         Path target = getStoragePath().resolve(file.getStorageKey()).normalize();
         if (!target.getParent().equals(getStoragePath().normalize())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new MaterialNotFoundException("File with id " + fileId + " was not found");
         }
         Resource resource = new FileSystemResource(target);
-        if (!resource.exists() || !resource.isReadable()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (!resource.exists() || !resource.isReadable()) throw new MaterialNotFoundException("File with id " + fileId + " was not found");
         return resource;
     }
 
     @Transactional(readOnly = true)
     public MaterialFileDTO getPublishedFileDetails(Long materialId, Long fileId) {
         Material material = materialRepository.findByIdAndStatus(materialId, MaterialStatus.PUBLISHED)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new MaterialNotFoundException("Published material with id " + materialId + " was not found"));
         return material.getFiles().stream().filter(candidate -> candidate.getId().equals(fileId))
                 .findFirst().map(MaterialService::toFileDTO)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new MaterialNotFoundException("File with id " + fileId + " was not found"));
     }
 
     @Transactional(readOnly = true)
@@ -106,7 +108,7 @@ public class MaterialService {
     public void publish(String title, String description, List<MultipartFile> uploads, String authorEmail) {
         List<MultipartFile> files = uploads == null ? List.of() : uploads.stream().filter(file -> !file.isEmpty()).toList();
         if (files.isEmpty() || files.size() > MAX_FILES) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Upload between 1 and 5 files");
+            throw new InvalidMaterialException("Upload between 1 and 5 files");
         }
         List<Path> stored = new ArrayList<>();
         try {
@@ -115,16 +117,16 @@ public class MaterialService {
             material.setTitle(title.trim());
             material.setDescription(description.trim());
             material.setAuthor(userRepository.findByEmail(authorEmail)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
+                    .orElseThrow(() -> new UserNotFoundException("Author with email " + authorEmail + " was not found")));
             material.setStatus(MaterialStatus.PUBLISHED);
             for (MultipartFile upload : files) {
                 String originalName = StringUtils.cleanPath(upload.getOriginalFilename() == null ? "file" : upload.getOriginalFilename());
                 if (originalName.contains("..") || originalName.length() > 255) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file name");
+                    throw new InvalidMaterialException("Invalid file name");
                 }
                 String extension = StringUtils.getFilenameExtension(originalName);
                 if (extension == null || !ALLOWED_EXTENSIONS.contains(extension.toLowerCase(Locale.ROOT))) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This file type is not allowed");
+                    throw new InvalidMaterialException("This file type is not allowed");
                 }
                 String key = UUID.randomUUID().toString();
                 Path target = getStoragePath().resolve(key).normalize();
@@ -141,7 +143,7 @@ public class MaterialService {
             materialRepository.save(material);
         } catch (IOException exception) {
             deleteFiles(stored);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to store uploaded files", exception);
+            throw new MaterialStorageException("Unable to store uploaded files", exception);
         } catch (RuntimeException exception) {
             deleteFiles(stored);
             throw exception;
