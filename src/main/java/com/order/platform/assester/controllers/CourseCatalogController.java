@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 
 @Controller
-@RequestMapping("/catalog")
+@RequestMapping("/catalog/courses")
 @RequiredArgsConstructor
 public class CourseCatalogController {
     private final CourseService courseService;

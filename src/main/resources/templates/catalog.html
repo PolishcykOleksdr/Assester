@@ -29,7 +29,7 @@
         </a>
         <div class="actions">
             <a th:href="@{/my/courses}">My courses</a>
-            <a th:href="@{/materials}">Materials</a>
+            <a th:href="@{/catalog/materials}">Materials</a>
             <a th:href="@{/login}">Sign in</a>
         </div>
     </nav>
@@ -46,7 +46,7 @@
         <aside class="catalog-sidebar" aria-label="Course search">
             <h2>Find a course</h2>
 
-            <form class="course-code-search" th:action="@{/catalog}" method="get">
+            <form class="course-code-search" th:action="@{/catalog/courses}" method="get">
                 <label class="catalog-search-label" for="courseSearch">Search by title or description</label>
                 <input id="courseSearch" class="catalog-search" type="search" name="query"
                        placeholder="Course title or description"
@@ -55,7 +55,7 @@
                 <button class="btn compact-btn" type="submit">Search</button>
             </form>
 
-            <form class="course-code-search" th:action="@{/catalog}" method="get">
+            <form class="course-code-search" th:action="@{/catalog/courses}" method="get">
                 <label class="catalog-search-label" for="courseCode">Search with a course code</label>
                 <input id="courseCode" class="catalog-search" type="search" name="code"
                        placeholder="CRS-XXXXXXXX"
@@ -100,7 +100,7 @@
                     </div>
                     <div class="catalog-course-action">
                         <span class="course-status">Published</span>
-                        <a class="btn compact-btn" th:href="@{/catalog/{code}(code=${course.courseCode})}">View course</a>
+                        <a class="btn compact-btn" th:href="@{/catalog/courses/{code}(code=${course.courseCode})}">View course</a>
                     </div>
                 </article>
 

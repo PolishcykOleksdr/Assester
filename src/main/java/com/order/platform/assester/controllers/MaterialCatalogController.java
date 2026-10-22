@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Controller
-@RequestMapping("/materials")
+@RequestMapping("/catalog/materials")
 @RequiredArgsConstructor
 public class MaterialCatalogController {
     private final MaterialService materialService;
@@ -41,8 +41,8 @@ public class MaterialCatalogController {
     @GetMapping("/code/{code}")
     public String byCode(@PathVariable String code, Model model) {
         MaterialSummaryDTO material = materialService.findPublishedByCode(code);
-        if (material == null) return "redirect:/materials?codeNotFound=true";
-        return "redirect:/materials/" + material.id();
+        if (material == null) return "redirect:/catalog/materials?codeNotFound=true";
+        return "redirect:/catalog/materials/" + material.id();
     }
 
     @Audited

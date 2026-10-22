@@ -6,7 +6,7 @@
 </head>
 <body>
 <main class="container page-container">
-    <nav class="navbar"><a th:href="@{/}" class="brand">Assester</a><div class="actions"><a th:href="@{/materials}">Materials</a><a th:href="@{/my/materials}">My materials</a></div></nav>
+    <nav class="navbar"><a th:href="@{/}" class="brand">Assester</a><div class="actions"><a th:href="@{/catalog/materials}">Materials</a><a th:href="@{/my/materials}">My materials</a></div></nav>
     <section class="editor-layout">
         <header class="editor-heading"><h1>Share a material</h1><p>Publish files for others to find and download. You can attach up to five files.</p></header>
         <form class="editor-form surface" th:action="@{/my/materials}" th:object="${materialForm}" method="post" enctype="multipart/form-data">
