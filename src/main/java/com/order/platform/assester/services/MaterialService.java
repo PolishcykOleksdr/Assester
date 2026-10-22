@@ -32,7 +32,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class MaterialService {
-    private static final Set<String> ALLOWED_EXTENSIONS = Set.of("pdf", "ppt", "pptx", "odp", "doc", "docx", "odt", "txt", "png", "jpg", "jpeg");
+    private static final Set<String> ALLOWED_EXTENSIONS = Set.of(
+            "pdf", "ppt", "pptx", "odp", "doc", "docx", "odt", "txt", "png", "jpg", "jpeg");
     private static final int MAX_FILES = 5;
     private final MaterialRepository materialRepository;
     private final UserRepository userRepository;
@@ -74,12 +75,15 @@ public class MaterialService {
                 .orElseThrow(() -> new MaterialNotFoundException("Published material with id " + materialId + " was not found"));
         MaterialFile file = material.getFiles().stream().filter(candidate -> candidate.getId().equals(fileId)).findFirst()
                 .orElseThrow(() -> new MaterialNotFoundException("File with id " + fileId + " was not found"));
+
         Path target = getStoragePath().resolve(file.getStorageKey()).normalize();
         if (!target.getParent().equals(getStoragePath().normalize())) {
             throw new MaterialNotFoundException("File with id " + fileId + " was not found");
         }
         Resource resource = new FileSystemResource(target);
-        if (!resource.exists() || !resource.isReadable()) throw new MaterialNotFoundException("File with id " + fileId + " was not found");
+        if (!resource.exists() || !resource.isReadable()) {
+            throw new MaterialNotFoundException("File with id " + fileId + " was not found");
+        }
         return resource;
     }
 
@@ -99,7 +103,9 @@ public class MaterialService {
 
     @Transactional(readOnly = true)
     public List<MaterialSummaryDTO> findMyPublishedForSelection(String email) {
-        if (email == null) return List.of();
+        if (email == null) {
+            return List.of();
+        }
         return materialRepository.findAllByAuthorEmailAndStatusOrderByTitleAsc(email, MaterialStatus.PUBLISHED)
                 .stream().map(MaterialService::toSummary).toList();
     }
@@ -156,13 +162,23 @@ public class MaterialService {
 
     private void deleteFiles(List<Path> paths) {
         paths.forEach(path -> {
-            try { Files.deleteIfExists(path); } catch (IOException ignored) { }
+            try {
+                Files.deleteIfExists(path);
+            } catch (IOException ignored) {
+                // Best effort cleanup after a failed upload.
+            }
         });
     }
 
     private static MaterialSummaryDTO toSummary(Material material) {
-        return new MaterialSummaryDTO(material.getId(), material.getMaterialCode(), material.getTitle(), material.getDescription(),
-                material.getAuthor().getUsername(), material.getFiles().size(), material.getCreatedAt());
+        return new MaterialSummaryDTO(
+                material.getId(),
+                material.getMaterialCode(),
+                material.getTitle(),
+                material.getDescription(),
+                material.getAuthor().getUsername(),
+                material.getFiles().size(),
+                material.getCreatedAt());
     }
 
     private static MaterialFileDTO toFileDTO(MaterialFile file) {

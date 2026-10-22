@@ -65,6 +65,6 @@ public class RegisterController {
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie);
 
-        return "redirect:catalog";
+        return "redirect:home";
     }
 }

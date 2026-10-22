@@ -43,9 +43,13 @@ public class MyMaterialsController {
 
     @Audited
     @PostMapping
-    public String publish(@Valid @ModelAttribute("materialForm") MaterialFormDTO form, BindingResult bindingResult,
-                          @RequestParam("files") List<MultipartFile> files, Authentication authentication, Model model) {
-        if (bindingResult.hasErrors()) return "material-form";
+    public String publish(@Valid @ModelAttribute("materialForm") MaterialFormDTO form,
+                          BindingResult bindingResult,
+                          @RequestParam("files") List<MultipartFile> files,
+                          Authentication authentication) {
+        if (bindingResult.hasErrors()) {
+            return "material-form";
+        }
         materialService.publish(form.getTitle(), form.getDescription(), files, authentication.getName());
         long uploadedFileCount = files.stream().filter(file -> !file.isEmpty()).count();
         log.info("Material published by user {}; fileCount={}",

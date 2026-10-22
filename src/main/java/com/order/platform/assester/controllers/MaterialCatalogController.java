@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Controller
@@ -30,10 +32,15 @@ public class MaterialCatalogController {
                           @RequestParam(required = false) String code, Model model) {
         model.addAttribute("query", query == null ? "" : query.trim());
         model.addAttribute("code", code == null ? "" : code.trim());
-        MaterialSummaryDTO searchedMaterial = code == null || code.isBlank() ? null : materialService.findPublishedByCode(code);
+
+        MaterialSummaryDTO searchedMaterial = code == null || code.isBlank() ? null :
+                materialService.findPublishedByCode(code);
+
         model.addAttribute("searchedMaterial", searchedMaterial);
-        model.addAttribute("materials", code == null || code.isBlank() ? materialService.findPublished(query)
+        model.addAttribute("materials", code == null || code.isBlank() ?
+                materialService.findPublished(query)
                 : searchedMaterial == null ? List.of() : List.of(searchedMaterial));
+
         return "materials-catalog";
     }
 
@@ -41,7 +48,9 @@ public class MaterialCatalogController {
     @GetMapping("/code/{code}")
     public String byCode(@PathVariable String code, Model model) {
         MaterialSummaryDTO material = materialService.findPublishedByCode(code);
-        if (material == null) return "redirect:/catalog/materials?codeNotFound=true";
+        if (material == null) {
+            return "redirect:/catalog/materials?codeNotFound=true";
+        }
         return "redirect:/catalog/materials/" + material.id();
     }
 
@@ -58,9 +67,10 @@ public class MaterialCatalogController {
     public ResponseEntity<Resource> download(@PathVariable Long materialId, @PathVariable Long fileId) {
         Resource file = materialService.getPublishedFile(materialId, fileId);
         MaterialFileDTO details = materialService.getPublishedFileDetails(materialId, fileId);
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" +
-                        org.springframework.web.util.UriUtils.encode(details.originalName(), java.nio.charset.StandardCharsets.UTF_8))
+                        UriUtils.encode(details.originalName(), StandardCharsets.UTF_8))
                 .body(file);
     }
 }
