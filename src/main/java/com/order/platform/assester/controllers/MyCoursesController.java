@@ -47,6 +47,7 @@ public class MyCoursesController {
             model.addAttribute("formAction", "/my/courses");
             return "course-form";
         }
+
         courseService.createDraft(form, authentication.getName());
         log.info("Course draft created by user {}", EmailMasker.mask(authentication.getName()));
         return "redirect:/my/courses";

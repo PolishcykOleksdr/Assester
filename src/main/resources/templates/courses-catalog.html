@@ -95,8 +95,8 @@
                             <strong th:if="${course.accessType.name() == 'PAID'}"
                                     th:text="|${course.price} ${course.currency}|">0 UAH</strong>
                         </div>
-                        <p class="course-material-links" th:if="${course.materialCount > 0}"
-                           th:text="|${course.materialCount} included material(s)|">Included materials</p>
+                        <p class="course-material-links" th:if="${course.courseMaterials().size() > 0}"
+                           th:text="|${course.courseMaterials().size()} included material(s)|">Included materials</p>
                     </div>
                     <div class="catalog-course-action">
                         <span class="course-status">Published</span>

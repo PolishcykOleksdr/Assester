@@ -1,5 +1,6 @@
 package com.order.platform.assester.controllers;
 
+import com.order.platform.assester.dto.CourseSummaryDTO;
 import com.order.platform.assester.dto.MaterialSummaryDTO;
 import com.order.platform.assester.dto.MaterialFileDTO;
 import com.order.platform.assester.logging.annotation.Audited;
@@ -33,13 +34,21 @@ public class MaterialCatalogController {
         model.addAttribute("query", query == null ? "" : query.trim());
         model.addAttribute("code", code == null ? "" : code.trim());
 
-        MaterialSummaryDTO searchedMaterial = code == null || code.isBlank() ? null :
+        MaterialSummaryDTO searchedMaterial = code == null ? null :
                 materialService.findPublishedByCode(code);
 
         model.addAttribute("searchedMaterial", searchedMaterial);
-        model.addAttribute("materials", code == null || code.isBlank() ?
-                materialService.findPublished(query)
-                : searchedMaterial == null ? List.of() : List.of(searchedMaterial));
+
+        List<MaterialSummaryDTO> displayMaterials;
+        if (code != null && !code.isBlank()) {
+            displayMaterials = searchedMaterial == null ? List.of() : List.of(searchedMaterial);
+        } else if (query != null && !query.isBlank()) {
+            displayMaterials = materialService.findPublishedByQuery(query);
+        } else {
+            displayMaterials = materialService.findPublishedMaterials();
+        }
+
+        model.addAttribute("displayMaterials", displayMaterials);
 
         return "materials-catalog";
     }

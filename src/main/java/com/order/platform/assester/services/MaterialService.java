@@ -2,13 +2,16 @@ package com.order.platform.assester.services;
 
 import com.order.platform.assester.dto.MaterialFileDTO;
 import com.order.platform.assester.dto.MaterialSummaryDTO;
+import com.order.platform.assester.entities.Course;
 import com.order.platform.assester.entities.Material;
 import com.order.platform.assester.entities.MaterialFile;
+import com.order.platform.assester.enums.CourseStatus;
 import com.order.platform.assester.enums.MaterialStatus;
 import com.order.platform.assester.exceptions.material.InvalidMaterialException;
 import com.order.platform.assester.exceptions.material.MaterialNotFoundException;
 import com.order.platform.assester.exceptions.material.MaterialStorageException;
 import com.order.platform.assester.exceptions.user.UserNotFoundException;
+import com.order.platform.assester.mapper.MaterialMapper;
 import com.order.platform.assester.repositories.MaterialRepository;
 import com.order.platform.assester.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,9 @@ public class MaterialService {
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of(
             "pdf", "ppt", "pptx", "odp", "doc", "docx", "odt", "txt", "png", "jpg", "jpeg");
     private static final int MAX_FILES = 5;
+
+    private final MaterialMapper materialMapper;
+
     private final MaterialRepository materialRepository;
     private final UserRepository userRepository;
 
@@ -42,23 +48,24 @@ public class MaterialService {
     private String storageLocation;
 
     @Transactional(readOnly = true)
-    public List<MaterialSummaryDTO> findPublished(String query) {
+    public List<MaterialSummaryDTO> findPublishedByQuery(String query) {
         List<Material> materials = query == null || query.isBlank()
                 ? materialRepository.findAllByStatusOrderByUpdatedAtDesc(MaterialStatus.PUBLISHED)
-                : materialRepository.findAllByStatusAndTitleContainingIgnoreCaseOrStatusAndDescriptionContainingIgnoreCaseOrderByUpdatedAtDesc(
-                    MaterialStatus.PUBLISHED, query.trim(), MaterialStatus.PUBLISHED, query.trim());
-        return materials.stream().map(MaterialService::toSummary).toList();
+                : materialRepository.findAllPublishedByQuery(
+                    query.trim());
+
+        return materials.stream().map(materialMapper::toSummary).toList();
     }
 
     @Transactional(readOnly = true)
     public MaterialSummaryDTO findPublishedByCode(String code) {
         return materialRepository.findByMaterialCodeIgnoreCaseAndStatus(code.trim(), MaterialStatus.PUBLISHED)
-                .map(MaterialService::toSummary).orElse(null);
+                .map(materialMapper::toSummary).orElse(null);
     }
 
     @Transactional(readOnly = true)
     public MaterialSummaryDTO findPublishedById(Long id) {
-        return materialRepository.findByIdAndStatus(id, MaterialStatus.PUBLISHED).map(MaterialService::toSummary)
+        return materialRepository.findByIdAndStatus(id, MaterialStatus.PUBLISHED).map(materialMapper::toSummary)
                 .orElseThrow(() -> new MaterialNotFoundException("Published material with id " + id + " was not found"));
     }
 
@@ -98,16 +105,19 @@ public class MaterialService {
 
     @Transactional(readOnly = true)
     public List<MaterialSummaryDTO> findMine(String email) {
-        return materialRepository.findAllByAuthorEmailOrderByUpdatedAtDesc(email).stream().map(MaterialService::toSummary).toList();
+        return materialRepository.findAllByAuthorEmailOrderByUpdatedAtDesc(email)
+                .stream()
+                .map(materialMapper::toSummary)
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public List<MaterialSummaryDTO> findMyPublishedForSelection(String email) {
-        if (email == null) {
-            return List.of();
-        }
-        return materialRepository.findAllByAuthorEmailAndStatusOrderByTitleAsc(email, MaterialStatus.PUBLISHED)
-                .stream().map(MaterialService::toSummary).toList();
+        return materialRepository
+                .findAllAuthorPublishedMaterials(email)
+                .stream()
+                .map(materialMapper::toSummary)
+                .toList();
     }
 
     @Transactional
@@ -170,18 +180,13 @@ public class MaterialService {
         });
     }
 
-    private static MaterialSummaryDTO toSummary(Material material) {
-        return new MaterialSummaryDTO(
-                material.getId(),
-                material.getMaterialCode(),
-                material.getTitle(),
-                material.getDescription(),
-                material.getAuthor().getUsername(),
-                material.getFiles().size(),
-                material.getCreatedAt());
-    }
-
     private static MaterialFileDTO toFileDTO(MaterialFile file) {
         return new MaterialFileDTO(file.getId(), file.getOriginalName(), file.getContentType(), file.getSizeBytes());
+    }
+
+    @Transactional(readOnly = true)
+    public List<MaterialSummaryDTO> findPublishedMaterials() {
+        List<Material> materials = materialRepository.findAllByStatusOrderByUpdatedAtDesc(MaterialStatus.PUBLISHED);
+        return materials.stream().map(materialMapper::toSummary).toList();
     }
 }

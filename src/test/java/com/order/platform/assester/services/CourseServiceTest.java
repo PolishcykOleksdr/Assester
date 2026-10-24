@@ -59,7 +59,7 @@ class CourseServiceTest {
         assertEquals(CourseAccessType.FREE, summary.accessType());
         assertEquals(CourseStatus.DRAFT, summary.status());
         assertEquals("Please update the description", summary.moderationComment());
-        assertEquals(0, summary.materialCount());
+        assertEquals(0, summary.courseMaterials().size());
         assertTrue(summary.courseMaterials().isEmpty());
 
         verify(courseRepository).findAllByAuthorEmailOrderByUpdatedAtDesc(authorEmail);

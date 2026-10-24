@@ -58,9 +58,14 @@
                 <legend>Include published materials</legend>
                 <label class="material-choice" th:each="material : ${materials}">
                     <input type="checkbox" name="materialIds" th:value="${material.id}"
-                           th:checked="${courseForm.materialIds != null and #lists.contains(courseForm.materialIds, material.id)}">
-                    <span><strong th:text="${material.title}">Material title</strong><br><small th:text="|${material.materialCode} · ${material.fileCount} file(s)|">Material info</small></span>
+                           th:checked="${courseForm.materialIds != null
+                           and #lists.contains(courseForm.materialIds, material.id)}">
+                    <span>
+                        <strong th:text="${material.title}">Material title</strong>
+                        <small th:text="|${material.materialCode} - ${material.fileCount} file(s)|">Material info</small>
+                    </span>
                 </label>
+
             </fieldset>
             <p class="subtitle" th:if="${#lists.isEmpty(materials)}">You can add materials after publishing them.</p>
 

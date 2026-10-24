@@ -32,25 +32,28 @@ public class CourseCatalogController {
         model.addAttribute("searchCode", code == null ? "" : code.trim());
         model.addAttribute("searchQuery", query == null ? "" : query.trim());
 
-        CourseSummaryDTO searchedCourse = code == null || code.isBlank() ? null : courseService.findPublishedCourseByCode(code);
+        CourseSummaryDTO searchedCourse = code == null ? null :
+                courseService.findPublishedByCode(code);
+
         model.addAttribute("searchedCourse", searchedCourse);
 
         List<CourseSummaryDTO> displayCourses;
         if (code != null && !code.isBlank()) {
             displayCourses = searchedCourse == null ? List.of() : List.of(searchedCourse);
         } else if (query != null && !query.isBlank()) {
-            displayCourses = courseService.searchPublishedCourses(query);
+            displayCourses = courseService.searchPublishedCoursesByQuery(query);
         } else {
             displayCourses = courseService.findPublishedCourses();
         }
+
         model.addAttribute("displayCourses", displayCourses);
-        return "catalog";
+        return "courses-catalog";
     }
 
     @Audited
     @GetMapping("/{courseCode}")
     public String getCourseDetails(@PathVariable String courseCode, Model model) {
-        CourseSummaryDTO course = courseService.findPublishedCourseByCode(courseCode);
+        CourseSummaryDTO course = courseService.findPublishedByCode(courseCode);
         model.addAttribute("course", course);
         return "course-details";
     }
