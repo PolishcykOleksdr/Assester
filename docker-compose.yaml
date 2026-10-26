@@ -35,8 +35,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
-      SPRING_DATASOURCE_URL: ${POSTGRES_URL:-jdbc:postgresql://postgres:5432/assester}
+      SPRING_DATASOURCE_URL: ${POSTGRES_URL:-jdbc:postgresql://postgres:5432/${POSTGRES_DB:-assester}}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-rootroot}
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
@@ -51,7 +50,7 @@ services:
     ports:
       - "${APP_PORT:-8080}:8080"
     healthcheck:
-      test: ["CMD-SHELL", "nc -z 127.0.0.1 8080 || exit 1"]
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8080/actuator/health"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -60,26 +59,29 @@ services:
       - monitoring
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.14.0
     container_name: assester-prometheus
     ports:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
     networks:
       - monitoring
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3.7.9
     container_name: assester-loki
     ports:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - loki_data:/loki
     networks:
       - monitoring
 
   alloy:
-    image: grafana/alloy:latest
+    image: grafana/alloy:v1.21.2
     container_name: assester-alloy
     restart: unless-stopped
     command:
@@ -97,19 +99,24 @@ services:
       - monitoring
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.2.4
     container_name: assester-grafana
     ports:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
     networks:
       - monitoring
 
 volumes:
   postgres_data:
   alloy_data:
+  prometheus_data:
+  loki_data:
+  grafana_data:
 
 networks:
   monitoring:

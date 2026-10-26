@@ -23,7 +23,7 @@ The application uses Spring Boot, Spring Security with JWT cookies, Thymeleaf, a
 
 3. Open `http://localhost:8080` (or the port configured by `APP_PORT`).
 
-To stop the containers, run `docker compose down`. PostgreSQL data is kept in the `postgres_data` Docker volume. Uploaded material files are kept in `./uploads` on the host. Container logs are collected by Grafana Alloy and sent to Loki; Alloy's read positions are kept in the `alloy_data` Docker volume. The application also writes logs to stdout, so they remain available through `docker compose logs`.
+To stop the containers, run `docker compose down`. PostgreSQL data, Prometheus metrics, Loki logs, Grafana settings, and Alloy read positions are kept in Docker volumes. Uploaded material files are kept in `./uploads` on the host. Container logs are collected by Grafana Alloy and sent to Loki. The application also writes logs to stdout, so they remain available through `docker compose logs`.
 
 ## Configuration
 
@@ -34,7 +34,7 @@ To stop the containers, run `docker compose down`. PostgreSQL data is kept in th
 | `POSTGRES_PASSWORD`         | PostgreSQL password | `rootroot` |
 | `POSTGRES_DB`               | PostgreSQL database name | `assester` |
 | `POSTGRES_PORT`             | PostgreSQL host port | `5432` |
-| `POSTGRES_URL`              | Full JDBC URL override | Compose configures this automatically |
+| `POSTGRES_URL`              | Full JDBC URL override | Defaults in Compose to `jdbc:postgresql://postgres:5432/<POSTGRES_DB>` |
 | `JWT_SECRET`                | JWT signing key | Development default in configuration; set a strong secret outside local development |
 | `JWT_EXPIRATION`            | JWT lifetime in milliseconds | `86400000` |
 | `AUTH_TOKEN_NAME`           | Authentication cookie name | `AUTH_TOKEN` |
@@ -43,7 +43,6 @@ To stop the containers, run `docker compose down`. PostgreSQL data is kept in th
 | `MATERIAL_STORAGE_LOCATION` | Directory where uploaded files are stored | `/app/uploads/materials` in Compose |
 | `MATERIAL_MAX_FILE_SIZE`    | Maximum size of one uploaded file | `25MB` |
 | `MATERIAL_MAX_REQUEST_SIZE` | Maximum size of one upload request | `125MB` |
-| `SPRING_PROFILES_ACTIVE`    | Spring profile | `dev` |
 
 For local runs outside Docker, the material storage default is `uploads/materials`, relative to the application's working directory. In Compose, `./uploads` is mounted into the app container so uploaded files persist across container recreation. The upload directory is excluded from Git.
 

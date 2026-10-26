@@ -1,8 +1,6 @@
 spring:
   application:
     name: Assester
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}
   datasource:
     url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/assester}
     username: ${POSTGRES_USER:postgres}
