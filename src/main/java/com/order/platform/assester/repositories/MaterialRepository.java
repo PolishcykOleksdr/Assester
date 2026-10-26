@@ -1,6 +1,5 @@
 package com.order.platform.assester.repositories;
 
-import com.order.platform.assester.entities.Course;
 import com.order.platform.assester.entities.Material;
 import com.order.platform.assester.enums.MaterialStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -28,14 +27,23 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     List<Material> findAllPublishedByQuery(
             String query);
 
+    @Query("""
+    SELECT m
+    FROM Material m
+    WHERE m.status = MaterialStatus.PUBLISHED
+    AND LOWER(m.materialCode) = LOWER(:code)
+    """)
     @EntityGraph(attributePaths = {"files", "author"})
-    Optional<Material> findByMaterialCodeIgnoreCaseAndStatus(String code, MaterialStatus status);
+    Optional<Material> findByMaterialCodeIgnoreCaseAndStatus(String code);
 
+    @Query("""
+    SELECT m
+    FROM Material m
+    WHERE m.status = MaterialStatus.PUBLISHED
+    AND m.id = :id
+    """)
     @EntityGraph(attributePaths = {"files", "author"})
-    Optional<Material> findByIdAndStatus(Long id, MaterialStatus status);
-
-    @EntityGraph(attributePaths = "files")
-    Optional<Material> findByIdAndAuthorEmail(Long id, String email);
+    Optional<Material> findPublishedById(Long id);
 
     @Query("""
     SELECT m

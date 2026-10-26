@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * author: user,
@@ -28,6 +29,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional(readOnly = true)
     public User findByEmail(String email) {
         return userRepository
                 .findByEmail(email)
@@ -36,6 +38,7 @@ public class UserService {
                 ));
     }
 
+    @Transactional
     public void createUser(RegisterUserDTO registerUserDTO) {
         if (userRepository.existsByEmail(registerUserDTO.getEmail())) {
             throw new UserAlreadyExistsException(

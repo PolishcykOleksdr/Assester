@@ -23,7 +23,7 @@ The application uses Spring Boot, Spring Security with JWT cookies, Thymeleaf, a
 
 3. Open `http://localhost:8080` (or the port configured by `APP_PORT`).
 
-To stop the containers, run `docker compose down`. PostgreSQL data is kept in the `postgres_data` Docker volume. Uploaded material files are kept in `./uploads` on the host; logs are written to `./logs`.
+To stop the containers, run `docker compose down`. PostgreSQL data is kept in the `postgres_data` Docker volume. Uploaded material files are kept in `./uploads` on the host. Container logs are collected by Grafana Alloy and sent to Loki; Alloy's read positions are kept in the `alloy_data` Docker volume. The application also writes logs to stdout, so they remain available through `docker compose logs`.
 
 ## Configuration
 

@@ -78,13 +78,21 @@ services:
     networks:
       - monitoring
 
-  promtail:
-    image: grafana/promtail:latest
-    container_name: assester-promtail
+  alloy:
+    image: grafana/alloy:latest
+    container_name: assester-alloy
+    restart: unless-stopped
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
     volumes:
-      - ./promtail.yaml:/etc/promtail/promtail.yaml
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: -config.file=/etc/promtail/promtail.yaml
+      - ./alloy-config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - alloy_data:/var/lib/alloy/data
+    depends_on:
+      - loki
     networks:
       - monitoring
 
@@ -101,6 +109,7 @@ services:
 
 volumes:
   postgres_data:
+  alloy_data:
 
 networks:
   monitoring:
