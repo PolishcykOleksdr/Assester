@@ -16,7 +16,7 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = {MaterialMapper.class}
+        uses = {MaterialMapper.class, CourseMaterialMapper.class}
 )
 public interface CourseMapper {
     CourseSummaryDTO toSummary(Course course);

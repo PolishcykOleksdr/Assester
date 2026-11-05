@@ -19,5 +19,4 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface MaterialMapper {
     MaterialSummaryDTO toSummary(Material material);
-    Long toId(Material material);
 }
