@@ -34,10 +34,10 @@ public class SecurityConfig {
                         SessionCreationPolicy.STATELESS
                 ))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/css/**", "/js/**", "/favicon.ico").permitAll()
+                        auth.requestMatchers("/actuator/health", "/actuator/prometheus").permitAll()
+                                .requestMatchers("/css/**", "/js/**", "/favicon.ico").permitAll()
                                 .requestMatchers("/login", "/register", "/", "/logout").permitAll()
                                 .requestMatchers("/catalog", "/catalog/**").permitAll()
-                                .requestMatchers("/materials", "/materials/**").permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )

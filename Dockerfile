@@ -9,9 +9,9 @@ RUN mvn -B -ntp package -DskipTests \
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
+RUN apk add --no-cache curl
 RUN addgroup -S app && adduser -S -G app app
-RUN mkdir -p /app/logs/info /app/logs/error /app/logs/debug && \
-    chown -R app:app /app
+RUN chown -R app:app /app
 COPY --from=build --chown=app:app /build/app.jar /app/app.jar
 USER app
 EXPOSE 8080

@@ -1,5 +1,6 @@
 package com.order.platform.assester.security;
 
+import com.order.platform.assester.logging.RequestExclusions;
 import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +23,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * author: user,
@@ -33,17 +33,14 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
-    private static final List<String> PUBLIC_PATHS = List.of("/css/", "/js/", "/favicon.ico");
-
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     @Value("${jwt.token-name}")
     private String authTokenName;
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        return PUBLIC_PATHS.stream().anyMatch(uri::startsWith);
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
+        return RequestExclusions.shouldExclude(request);
     }
 
     @Override

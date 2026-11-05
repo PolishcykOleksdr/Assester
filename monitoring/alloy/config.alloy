@@ -1,0 +1,60 @@
+
+logging {
+  level  = "info"
+  format = "logfmt"
+}
+
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "docker_logs" {
+  targets = discovery.docker.containers.targets
+
+  // Container name without leading slash
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+
+  // Spring Boot applications
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*-app)"
+    target_label  = "job"
+    replacement   = "springboot"
+  }
+
+  // All other containers
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = ".*-app.*"
+    action        = "keep"
+  }
+
+  // Service name
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "service"
+    replacement   = "$1"
+  }
+
+  rule {
+    target_label = "environment"
+    replacement  = "development"
+  }
+}
+
+loki.source.docker "containers" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.docker_logs.output
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

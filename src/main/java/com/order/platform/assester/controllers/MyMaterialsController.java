@@ -5,12 +5,14 @@ import com.order.platform.assester.logging.EmailMasker;
 import com.order.platform.assester.logging.annotation.Audited;
 import com.order.platform.assester.services.MaterialService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,13 +26,14 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/my/materials")
 @RequiredArgsConstructor
+@Validated
 public class MyMaterialsController {
     private final MaterialService materialService;
 
     @Audited
     @GetMapping
     public String list(Authentication authentication, Model model) {
-        model.addAttribute("materials", materialService.findMine(authentication.getName()));
+        model.addAttribute("materials", materialService.findMyMaterialAsSummaries(authentication.getName()));
         return "my-materials";
     }
 
@@ -43,13 +46,19 @@ public class MyMaterialsController {
 
     @Audited
     @PostMapping
-    public String publish(@Valid @ModelAttribute("materialForm") MaterialFormDTO form, BindingResult bindingResult,
-                          @RequestParam("files") List<MultipartFile> files, Authentication authentication, Model model) {
-        if (bindingResult.hasErrors()) return "material-form";
-        materialService.publish(form.getTitle(), form.getDescription(), files, authentication.getName());
-        long uploadedFileCount = files.stream().filter(file -> !file.isEmpty()).count();
+    public String publish(@Valid @ModelAttribute("materialForm") MaterialFormDTO form,
+                          BindingResult bindingResult,
+                          @NotNull @RequestParam("files") List<MultipartFile> files,
+                          Authentication authentication) {
+        if (bindingResult.hasErrors()) {
+            return "material-form";
+        }
+
+        materialService.publish(form, files, authentication.getName());
+
         log.info("Material published by user {}; fileCount={}",
-                EmailMasker.mask(authentication.getName()), uploadedFileCount);
+                EmailMasker.mask(authentication.getName()), files.size());
+
         return "redirect:/my/materials";
     }
 }

@@ -16,6 +16,5 @@ public record CourseSummaryDTO(
         String currency,
         CourseStatus status,
         String moderationComment,
-        int materialCount,
         List<CourseMaterialSummaryDTO> courseMaterials
 ) {}

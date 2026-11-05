@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * author: user,
@@ -22,21 +23,22 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
-    private final UserRepository userRepository;
     private final UserMapper userMapper;
+
+    private final UserRepository userRepository;
+
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional(readOnly = true)
     public User findByEmail(String email) {
         return userRepository
                 .findByEmail(email)
-                .orElseThrow(() -> {
-                    return new UserNotFoundException(
-                            String.format("User with email %s not found", email)
-                    );
-                });
+                .orElseThrow(() -> new UserNotFoundException(
+                        String.format("User with email %s not found", email)
+                ));
     }
 
-    @Audited
+    @Transactional
     public void createUser(RegisterUserDTO registerUserDTO) {
         if (userRepository.existsByEmail(registerUserDTO.getEmail())) {
             throw new UserAlreadyExistsException(

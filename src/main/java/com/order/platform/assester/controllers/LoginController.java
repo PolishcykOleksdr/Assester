@@ -62,6 +62,6 @@ public class LoginController {
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie);
 
-        return "redirect:catalog";
+        return "redirect:home";
     }
 }
